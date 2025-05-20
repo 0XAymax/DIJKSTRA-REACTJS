@@ -1,5 +1,3 @@
-"use client";
-
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -14,19 +12,19 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Logo width={250} height={250} className="filter contrast-150 brightness-70"/>
+          <div className="flex items-center ml-4">
+            <Logo width={160} height={160} className="filter contrast-150 brightness-70"/>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1 sm:gap-2 md:gap-4 mr-4 flex-shrink-0">
             <Link to="/login">
-               <Button variant="outline" className="hidden md:flex cursor-pointer">
-              Log in
-            </Button>
+              <Button variant="outline" className="xs:flex text-xs sm:text-sm px-2 sm:px-4 cursor-pointer whitespace-nowrap">
+                Log in
+              </Button>
             </Link>
             <Link to="/sign-up">
-                <Button className="bg-purple-600 hover:bg-purple-700 cursor-pointer">
-              Sign up
-            </Button>
+              <Button className="bg-purple-600 hover:bg-purple-700 text-xs sm:text-sm px-2 sm:px-4 cursor-pointer whitespace-nowrap">
+                Sign up
+              </Button>
             </Link>
           </div>
         </div>
