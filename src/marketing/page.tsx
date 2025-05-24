@@ -6,21 +6,32 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Logo from "@/components/ui/Logo";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const { isAuthenticated } = useAuth();
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center ml-4">
-            <Logo width={160} height={160} className="filter contrast-150 brightness-70"/>
+            <Logo width={160} height={160} className="filter contrast-150 brightness-70" />
           </div>
           <div className="flex items-center gap-1 sm:gap-2 md:gap-4 mr-4 flex-shrink-0">
-            <Link to="/login">
-              <Button variant="outline" className="xs:flex text-xs sm:text-sm px-2 sm:px-4 cursor-pointer whitespace-nowrap">
-                Log in
-              </Button>
-            </Link>
+            {
+              isAuthenticated ? (
+                <Link to="/dashboard">
+                  <Button variant="outline" className="xs:flex text-xs sm:text-sm px-2 sm:px-4 cursor-pointer whitespace-nowrap">
+                    Log in
+                  </Button>
+                </Link>) : (
+                <Link to="/login">
+                  <Button variant="outline" className="xs:flex text-xs sm:text-sm px-2 sm:px-4 cursor-pointer whitespace-nowrap">
+                    Log in
+                  </Button>
+                </Link>
+              )
+            }
             <Link to="/sign-up">
               <Button className="bg-purple-600 hover:bg-purple-700 text-xs sm:text-sm px-2 sm:px-4 cursor-pointer whitespace-nowrap">
                 Sign up
@@ -49,10 +60,10 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row justify-center">
                   <Link to="/sign-up">
-                      <Button className="bg-purple-600 hover:bg-purple-700 px-8 cursor-pointer">
-                       Start Learning
-                       <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
+                    <Button className="bg-purple-600 hover:bg-purple-700 px-8 cursor-pointer">
+                      Start Learning
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
                   </Link>
                 </div>
               </div>
@@ -167,7 +178,7 @@ export default function Home() {
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
             <div className="col-span-2 lg:col-span-1">
               <div className="flex items-center ">
-                <Logo width={150} height={150} className="filter contrast-150 brightness-70"/>
+                <Logo width={150} height={150} className="filter contrast-150 brightness-70" />
               </div>
               <p className="text-sm text-gray-500">
                 Making computer science education accessible, engaging, and
