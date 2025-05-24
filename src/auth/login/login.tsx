@@ -1,6 +1,16 @@
+import { useAuth } from "@/context/AuthContext";
 import { LoginForm } from "./login-form";
 import Logo from "@/components/ui/Logo";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 export default function Login() {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <>
