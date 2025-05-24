@@ -1,13 +1,27 @@
-import { Link } from "react-router-dom"
-import { Book, BookOpen, Clock, Home, LayoutDashboard, LineChart, Settings } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+import { Book, BookOpen, Clock, Home, LayoutDashboard, LineChart, LogOut, Settings } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import Logo from "@/components/ui/Logo"
+import { useAuth } from "@/context/AuthContext"
 
 export default function Dashboard() {
+  const { currentUser,logout } = useAuth();
+  const navigate = useNavigate();
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase();
+  };
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
   return (
     <div className="min-h-screen w-full font-sans overflow-hidden">
       <header className="border-b border-purple-700 bg-white shadow-sm">
@@ -46,10 +60,13 @@ export default function Dashboard() {
           </nav>
 
           <div className="flex items-center gap-3 mr-4">
-            <span className="hidden text-sm text-gray-600 md:block">student@example.com</span>
+            <span className="hidden text-sm text-gray-600 md:block">{currentUser?.email}</span>
             <Avatar className="h-8 w-8 border border-dashed border-gray-300">
-              <AvatarFallback className="bg-purple-50 text-purple-700">ST</AvatarFallback>
+              <AvatarFallback className="bg-purple-50 text-purple-700">{getInitials(currentUser?.name || '')}</AvatarFallback>
             </Avatar>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-600 hover:text-purple-700 cursor-pointer" onClick={handleLogout}>
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </header>
@@ -162,7 +179,9 @@ export default function Dashboard() {
                     </CardContent>
 
                     <CardFooter className="flex-col items-start gap-5 p-0">
-                      <Button className="sketch-button px-6 bg-purple-700 hover:bg-purple-800 cursor-pointer">Continue Learning</Button>
+                      <Link to="/learning">
+                        <Button className="sketch-button px-6 bg-purple-700 hover:bg-purple-800 cursor-pointer">Continue Learning</Button>
+                      </Link>
                       <div className="w-full">
                         <div className="mb-2 flex items-center justify-between">
                           <span className="text-xs text-gray-500">Progress</span>
