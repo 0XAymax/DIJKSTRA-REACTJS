@@ -1,187 +1,416 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
+import { useState, useRef, useEffect } from "react"
+import { Send, Bot, User, MessageCircle, X, Minimize2, Maximize2 } from "lucide-react"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+import AIService from "@/api/ai-service"
 
-import { useState } from "react";
-import { Send, Lightbulb } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
-import { AvatarImage } from "@/components/ui/avatar";
-import { AvatarFallback } from "@/components/ui/avatar";
-
-// Définition des types
 interface Message {
-  role: "user" | "assistant";
-  content: string;
+  id: string
+  content: string
+  sender: "user" | "ai"
+  timestamp: Date
 }
 
-interface GraphoAssistantProps {
-  className?: string;
-}
-
-export default function GraphoAssistant({
-  className = "",
-}: GraphoAssistantProps) {
-  const [chatInput, setChatInput] = useState<string>("");
+export function LLMComponent() {
   const [messages, setMessages] = useState<Message[]>([
     {
-      role: "assistant",
-      content:
-        "Hello! I'm Grapho, your AI assistant for this Dijkstra's algorithm course. How can I help you today?",
+      id: "1",
+      content: "Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider aujourd'hui ?",
+      sender: "ai",
+      timestamp: new Date(),
     },
-    {
-      role: "user",
-      content: "What's the difference between Dijkstra and A* algorithms?",
-    },
-    {
-      role: "assistant",
-      content: `Great question! The main differences are:
+  ])
+  const [inputValue, setInputValue] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [isMinimized, setIsMinimized] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-- Dijkstra's algorithm finds the shortest path to all nodes from a source, while A* focuses on finding the shortest path to a specific target node
-- A* uses a heuristic function to guide the search toward the target, making it more efficient for single-target pathfinding
-- Dijkstra's algorithm is a special case of A* where the heuristic is zero
-- A* is generally faster for point-to-point pathfinding because it explores fewer nodes
-
-You'll learn more about A* in Unit 6 when we cover algorithm variations!`,
-    },
-  ]);
-
-  const handleSendMessage = (): void => {
-    if (chatInput.trim() === "") return;
-
-    // Add user message
-    setMessages((prev) => [...prev, { role: "user", content: chatInput }]);
-
-    // Simulate AI response (in a real app, you would call your AI service here)
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: `Thanks for your question about "${chatInput}". This is a simulated response. In a real implementation, this would be connected to your AI backend.`,
-        },
-      ]);
-    }, 1000);
-
-    setChatInput("");
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+  // Auto-scroll vers le bas quand de nouveaux messages arrivent
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
     }
-  };
+  }, [messages])
 
-  // Suggestions pour l'assistant
-  const suggestions: string[] = [
-    "How does Dijkstra's algorithm work?",
-    "What are priority queues used for?",
-    "Explain the time complexity of Dijkstra",
-    "When should I use A* instead of Dijkstra?",
-  ];
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || isLoading) return
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      content: inputValue.trim(),
+      sender: "user",
+      timestamp: new Date(),
+    }
+
+    // Ajouter le message utilisateur
+    setMessages((prev) => [...prev, userMessage])
+    setInputValue("")
+    setIsLoading(true)
+
+    try {
+      // Appeler votre API
+      const response = await AIService.sendMessage(userMessage.content)
+
+      // Ajouter la réponse de l'IA
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: response.response || "Désolé, je n'ai pas pu traiter votre demande.",
+        sender: "ai",
+        timestamp: new Date(),
+      }
+
+      setMessages((prev) => [...prev, aiMessage])
+    } catch (error: unknown) {
+      console.error("Error sending message:", error)
+
+      // Message d'erreur
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: "Désolé, une erreur s'est produite. Veuillez réessayer.",
+        sender: "ai",
+        timestamp: new Date(),
+      }
+
+      setMessages((prev) => [...prev, errorMessage])
+      toast.error("Erreur lors de l'envoi du message")
+    } finally {
+      setIsLoading(false)
+      inputRef.current?.focus()
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSendMessage()
+    }
+  }
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
+
+  if (!isOpen) {
+    return (
+      <Button
+        onClick={() => setIsOpen(true)}
+        className="fixed bottom-6 right-6 z-50 rounded-full p-2 shadow-lg bg-primary text-primary-foreground"
+      >
+        <MessageCircle className="h-6 w-6" />
+        {messages.length > 1 && (
+          <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white rounded-full text-xs px-2 py-0.5">
+            {messages.length}
+          </div>
+        )}
+      </Button>
+    )
+  }
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50">
+      <div
+        className={`flex flex-col w-full max-w-4xl mx-auto rounded-lg shadow-lg bg-gray-900 border border-gray-700 ${isMinimized ? "h-auto" : "h-[80vh] min-h-[500px]"
+          }`}
+      >
+        {/* Header */}
+        <div className="flex items-center gap-2 p-4 border-b border-gray-700 bg-gray-800/50">
+          <Bot className="h-6 w-6 text-primary" />
+          <h2 className="text-lg font-semibold text-white">Assistant IA</h2>
+          <div className="ml-auto flex items-center gap-1">
+            <Button variant="ghost" size="icon" onClick={() => setIsMinimized(!isMinimized)}>
+              {isMinimized ? (
+                <Maximize2 className="h-4 w-4 text-white" />
+              ) : (
+                <Minimize2 className="h-4 w-4 text-white" />
+              )}
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+              <X className="h-4 w-4 text-white" />
+            </Button>
+          </div>
+        </div>
+
+        {!isMinimized && (
+          <>
+            {/* Messages */}
+            <ScrollArea className="flex-1 p-4">
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex gap-3 ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    {message.sender === "ai" && (
+                      <div className="flex-shrink-0">
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Bot className="h-4 w-4 text-primary" />
+                        </div>
+                      </div>
+                    )}
+
+                    <div
+                      className={`max-w-[80%] rounded-lg p-3 ${message.sender === "user"
+                          ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white"
+                          : "bg-gray-700 text-gray-100"
+                        }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-xs mt-1 text-gray-400">{formatTime(message.timestamp)}</p>
+                    </div>
+
+                    {message.sender === "user" && (
+                      <div className="flex-shrink-0">
+                        <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                          <User className="h-4 w-4 text-primary-foreground" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+
+                {isLoading && (
+                  <div className="flex gap-3 justify-start">
+                    <div className="flex-shrink-0">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Bot className="h-4 w-4 text-primary" />
+                      </div>
+                    </div>
+                    <div className="bg-gray-700 rounded-lg p-3">
+                      <div className="flex gap-1">
+                        <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div
+                          className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.1s" }}
+                        ></div>
+                        <div
+                          className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.2s" }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+
+            {/* Input */}
+            <div className="p-4 border-t border-gray-700 bg-gray-800/50">
+              <div className="flex gap-2">
+                <Input
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Posez votre question sur Dijkstra..."
+                  disabled={isLoading}
+                  className="flex-1 bg-gray-700 text-white border-gray-600"
+                />
+                <Button onClick={handleSendMessage} disabled={!inputValue.trim() || isLoading} size="icon">
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-gray-400 mt-2">Appuyez sur Entrée pour envoyer</p>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// Version alternative avec hauteur flexible
+export function LLMComponentFlexible() {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "1",
+      content: "Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider aujourd'hui ?",
+      sender: "ai",
+      timestamp: new Date(),
+    },
+  ])
+  const [inputValue, setInputValue] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Auto-scroll vers le bas quand de nouveaux messages arrivent
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
+    }
+  }, [messages])
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || isLoading) return
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      content: inputValue.trim(),
+      sender: "user",
+      timestamp: new Date(),
+    }
+
+    // Ajouter le message utilisateur
+    setMessages((prev) => [...prev, userMessage])
+    setInputValue("")
+    setIsLoading(true)
+
+    try {
+      // Appeler votre API
+      const response = await AIService.sendMessage(userMessage.content)
+
+      // Ajouter la réponse de l'IA
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: response.response || "Désolé, je n'ai pas pu traiter votre demande.",
+        sender: "ai",
+        timestamp: new Date(),
+      }
+
+      setMessages((prev) => [...prev, aiMessage])
+    } catch (error: unknown) {
+      console.error("Error sending message:", error)
+
+      // Message d'erreur
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: "Désolé, une erreur s'est produite. Veuillez réessayer.",
+        sender: "ai",
+        timestamp: new Date(),
+      }
+
+      setMessages((prev) => [...prev, errorMessage])
+      toast.error("Erreur lors de l'envoi du message")
+    } finally {
+      setIsLoading(false)
+      inputRef.current?.focus()
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSendMessage()
+    }
+  }
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
 
   return (
     <div
-      className={`w-80 border-l border-slate-700 flex flex-col ${className}`}
+      className="flex flex-col w-full border rounded-lg bg-background"
+      style={{ height: "calc(100vh - 200px)", minHeight: "400px" }}
     >
-      <div className="p-4 border-b border-slate-700">
-        <h2 className="font-bold mb-1">Grapho</h2>
-        <p className="text-sm text-slate-300">Your AI learning assistant</p>
+      {/* Header */}
+      <div className="flex items-center gap-2 p-4 border-b bg-muted/50">
+        <Bot className="h-6 w-6 text-primary" />
+        <h2 className="text-lg font-semibold">Assistant IA</h2>
+        <div className="ml-auto flex items-center gap-1">
+          <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+          <span className="text-sm text-muted-foreground">En ligne</span>
+        </div>
       </div>
-      <ScrollArea className="flex-1">
-        <div className="p-4">
-          {messages.map((message, index) => (
+
+      {/* Messages */}
+      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+        <div className="space-y-4">
+          {messages.map((message) => (
             <div
-              key={index}
-              className={`flex items-start mb-4 ${
-                message.role === "user" ? "justify-end" : ""
-              }`}
+              key={message.id}
+              className={`flex gap-3 ${message.sender === "user" ? "justify-end" : "justify-start"}`}
             >
-              {message.role === "assistant" && (
-                <Avatar className="h-8 w-8 mr-3">
-                  <AvatarImage
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="Grapho"
-                  />
-                  <AvatarFallback className="bg-blue-600">G</AvatarFallback>
-                </Avatar>
+              {message.sender === "ai" && (
+                <div className="flex-shrink-0">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Bot className="h-4 w-4 text-primary" />
+                  </div>
+                </div>
               )}
+
               <div
-                className={`rounded-lg p-3 text-sm max-w-[85%] ${
-                  message.role === "user" ? "bg-blue-600" : "bg-[#1e293b]"
-                }`}
+                className={`max-w-[80%] ${message.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+                  } rounded-lg p-3`}
               >
-                <p className="whitespace-pre-line">{message.content}</p>
+                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                <p
+                  className={`text-xs mt-1 ${message.sender === "user" ? "text-primary-foreground/70" : "text-muted-foreground"
+                    }`}
+                >
+                  {formatTime(message.timestamp)}
+                </p>
               </div>
-              {message.role === "user" && (
-                <Avatar className="h-8 w-8 ml-3">
-                  <AvatarImage
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="User"
-                  />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
+
+              {message.sender === "user" && (
+                <div className="flex-shrink-0">
+                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                    <User className="h-4 w-4 text-primary-foreground" />
+                  </div>
+                </div>
               )}
             </div>
           ))}
+
+          {isLoading && (
+            <div className="flex gap-3 justify-start">
+              <div className="flex-shrink-0">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Bot className="h-4 w-4 text-primary" />
+                </div>
+              </div>
+              <div className="bg-muted rounded-lg p-3">
+                <div className="flex gap-1">
+                  <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"></div>
+                  <div
+                    className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.1s" }}
+                  ></div>
+                  <div
+                    className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.2s" }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </ScrollArea>
-      <div className="p-4 border-t border-slate-700">
-        <div className="flex items-center">
+
+      {/* Input */}
+      <div className="p-4 border-t bg-muted/50">
+        <div className="flex gap-2">
           <Input
-            placeholder="Ask Grapho a question..."
-            className="bg-[#1e293b] border-slate-600 text-white"
-            value={chatInput}
-            onChange={(e) => setChatInput(e.target.value)}
-            onKeyDown={handleKeyDown}
+            ref={inputRef}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Tapez votre message..."
+            disabled={isLoading}
+            className="flex-1"
           />
-          <Button
-            size="icon"
-            className="ml-2 bg-blue-600 hover:bg-blue-700"
-            onClick={handleSendMessage}
-          >
+          <Button onClick={handleSendMessage} disabled={!inputValue.trim() || isLoading} size="icon">
             <Send className="h-4 w-4" />
           </Button>
         </div>
-
-        {/* Suggestions */}
-        <div className="mt-3">
-          <div className="flex items-center text-xs text-slate-400 mb-2">
-            <Lightbulb className="h-3 w-3 mr-1" />
-            <span>Suggested questions:</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {suggestions.map((suggestion, index) => (
-              <button
-                key={index}
-                className="text-xs bg-[#172136] hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-md transition-colors"
-                onClick={() => {
-                  setChatInput(suggestion);
-                }}
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex mt-3 text-xs text-slate-400 justify-between">
-          <span className="text-xs text-slate-500">Type / to see commands</span>
-          <div className="flex items-center">
-            <span className="mr-2">Grapho Energy</span>
-            <div className="flex">
-              <div className="w-2 h-2 rounded-full bg-green-500 mr-0.5"></div>
-              <div className="w-2 h-2 rounded-full bg-green-500 mr-0.5"></div>
-              <div className="w-2 h-2 rounded-full bg-green-500 mr-0.5"></div>
-              <div className="w-2 h-2 rounded-full bg-green-500 mr-0.5"></div>
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            </div>
-          </div>
-        </div>
+        <p className="text-xs text-muted-foreground mt-2">Appuyez sur Entrée pour envoyer</p>
       </div>
     </div>
-  );
+  )
 }
+
+export default LLMComponent
