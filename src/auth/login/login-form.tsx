@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useRef} from "react";
+import React, { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
@@ -25,16 +25,23 @@ export function LoginForm({
       return;
     }
     try {
-      await login({ email, password });
-      toast.success("Login successful");
-      navigate("/dashboard");
-    } catch (error :any) {
-      toast.error(error.response ? error.response.data.message : "An error occurred");
+      const res = await login({ email, password });
+      if (res.status == 200) {
+        toast.success("Login successful");
+        navigate("/dashboard");
+      } else if (res.status == 401) {
+        toast.error("Invalid email or password");
+        return;
+      }
+    } catch (error: any) {
+      toast.error(
+        error.response ? error.response.data.message : "An error occurred"
+      );
     }
   };
 
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -49,20 +56,15 @@ export function LoginForm({
             type="email"
             placeholder="name@example.com"
             ref={emailRef}
-            required
           />
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
           </div>
-          <Input id="password" type="password" ref={passwordRef} required />
+          <Input id="password" type="password" ref={passwordRef} />
         </div>
-        <Button
-          type="button"
-          className="w-full cursor-pointer"
-          onClick={handleSubmit}
-        >
+        <Button type="submit" className="w-full cursor-pointer">
           Login
         </Button>
       </div>
