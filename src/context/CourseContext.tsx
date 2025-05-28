@@ -73,6 +73,8 @@ export const CourseProvider = ({ children }: { children: React.ReactNode }) => {
   const value = {
     courses,
     setCourses,
+    unitsProgress,
+    setUnitsProgress,
     getCourseById,
     loading,
     getUserUnitProgress,

@@ -1,7 +1,5 @@
 import { useState } from "react";
-import {
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +7,7 @@ import LearningHeader from "./LearningHeader";
 import LearningContent from "./LearningContent";
 import { useCourse } from "@/context/CourseContext";
 export default function LearningPage() {
-  const { courses } = useCourse();
+  const { courses, unitsProgress } = useCourse();
   const [selectedUnit, setSelectedUnit] = useState<string | null>();
   const [expandedUnits, setExpandedUnits] = useState<Record<string, boolean>>({
     0: true,
@@ -37,7 +35,9 @@ export default function LearningPage() {
         {/* Left Sidebar - Course Units */}
         <div className="w-80 bg-slate-50 border-r border-purple-700 flex flex-col">
           <div className="p-4 border-b border-purple-700">
-            <h2 className="font-bold text-xl mb-1 text-slate-900">Dijkstra's Algorithm</h2>
+            <h2 className="font-bold text-xl mb-1 text-slate-900">
+              Dijkstra's Algorithm
+            </h2>
             <p className="text-sm text-slate-600">
               Master the fundamentals of pathfinding
             </p>
@@ -49,8 +49,9 @@ export default function LearningPage() {
                 {Allunits.map((unit) => (
                   <div key={unit.id} className="mb-2">
                     <div
-                      className={`flex items-center p-2 hover:bg-slate-100 rounded-md cursor-pointer ${!unit.unlocked ? "opacity-60" : ""
-                        } ${selectedUnit === unit.id ? "bg-slate-100" : ""}`}
+                      className={`flex items-center p-2 hover:bg-slate-100 rounded-md cursor-pointer ${
+                        !unit.unlocked ? "opacity-60" : ""
+                      } ${selectedUnit === unit.id ? "bg-slate-100" : ""}`}
                       onClick={() => toggleUnit(unit.id)}
                     >
                       {expandedUnits[unit.id] ? (
@@ -65,16 +66,18 @@ export default function LearningPage() {
                           </span>
                         </div>
                         <Progress
-                          value={unit.progress}
+                          value={unitsProgress.find(p => p.unit_id === unit.id)?.completion_percentage || 0}
                           className="h-1 mt-1 bg-slate-200"
                         />
                       </div>
                     </div>
                     {expandedUnits[unit.id] && (
-                      <div className="ml-6 border-l pl-2 mt-1 border-purple-700">  
-                            <div className="flex items-center">
-                              <span className="text-sm text-slate-700">{unit.lesson.title}</span>
-                            </div>
+                      <div className="ml-6 border-l pl-2 mt-1 border-purple-700">
+                        <div className="flex items-center">
+                          <span className="text-sm text-slate-700">
+                            {unit.lesson.title}
+                          </span>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -85,12 +88,17 @@ export default function LearningPage() {
           <div className="p-4 border-t border-purple-700">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm font-medium text-slate-900">Overall Progress</div>
+                <div className="text-sm font-medium text-slate-900">
+                  Overall Progress
+                </div>
                 <div className="text-xs text-slate-500">
                   3 of 7 units started
                 </div>
               </div>
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-purple-700">
+              <Badge
+                variant="outline"
+                className="bg-blue-50 text-blue-700 border-purple-700"
+              >
                 34%
               </Badge>
             </div>
