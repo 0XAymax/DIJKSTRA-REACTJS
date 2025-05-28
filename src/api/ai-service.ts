@@ -48,6 +48,10 @@ const AIService = {
       throw error
     }
   },
+  getPromptsLogs: async (user_id: string) => {
+    const repsonse = await api.get(`/users/${user_id}/prompt_logs`);
+    return repsonse.data;
+  }
 }
 
 export default AIService
