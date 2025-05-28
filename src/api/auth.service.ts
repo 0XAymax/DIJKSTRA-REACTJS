@@ -1,7 +1,6 @@
 import type { LoginRequest, RegisterRequest } from '@/types';
 import api from './config';
-import axios from 'axios';
-const API_BASE_URL = 'https://djikstra-backend-72c0da10bb72.herokuapp.com';
+
 const AuthService = {
     login: async (data: LoginRequest)=> {
         const response = await api.post('/auth/login', data);
@@ -16,9 +15,7 @@ const AuthService = {
         localStorage.removeItem('token');
     },
     verifyToken: async (token: string)=> { 
-        const response = await axios.post(`${API_BASE_URL}/auth/verify`, { token }, {
-            headers: {Authorization: `Bearer ${token}`,},
-         });
+        const response = await api.post("/auth/verify", { token });
         return response;
     }
 };
