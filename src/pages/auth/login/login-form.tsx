@@ -35,13 +35,17 @@ export function LoginForm({
       }
     } catch (error: any) {
       toast.error(
-        error.response ? error.response.data.message : "An error occurred"
+        error.response ? error.response.data.detail : "An error occurred"
       );
     }
   };
 
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit}>
+    <form
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+      onSubmit={handleSubmit}
+    >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
