@@ -1,6 +1,7 @@
 import LearningHeader from "./LearningHeader";
-import LearningContent from "./LearningContent";
 import LearningSideBar from "./LearningSideBar";
+import { Outlet } from "react-router-dom";
+import GraphoAssistant from "./llm";
 export default function LearningPage() {
 
   return (
@@ -11,7 +12,10 @@ export default function LearningPage() {
         {/* Left Sidebar - Course Units */}
         <LearningSideBar />
         {/* Main Content */}
-        <LearningContent />
+        <div className="flex-1 flex bg-white">
+          <Outlet />
+          <GraphoAssistant />
+        </div>
       </div>
     </div>
   );

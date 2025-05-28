@@ -4,6 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCourse } from "@/context/CourseContext";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function LearningSideBar() {
     const { courses, unitsProgress } = useCourse();
@@ -58,11 +59,13 @@ export default function LearningSideBar() {
                                 </div>
                                 {expandedUnits[unit.id] && (
                                     <div className="ml-6 border-l pl-2 mt-1 border-purple-700">
-                                        <div className="flex items-center">
-                                            <span className="text-sm text-slate-700">
-                                                {unit.lesson.title}
-                                            </span>
-                                        </div>
+                                        <Link to={`/learning/${unit.lesson.id}`}>
+                                            <div className="flex items-center">
+                                                <span className="text-sm text-slate-700">
+                                                    {unit.lesson.title}
+                                                </span>
+                                            </div>
+                                        </Link>
                                     </div>
                                 )}
                             </div>
