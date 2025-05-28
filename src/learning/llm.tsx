@@ -119,23 +119,23 @@ export function LLMComponent() {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <div
-        className={`flex flex-col w-full max-w-4xl mx-auto rounded-lg shadow-lg bg-gray-900 border border-gray-700 ${isMinimized ? "h-auto" : "h-[80vh] min-h-[500px]"
+        className={`flex flex-col w-full max-w-4xl mx-auto rounded-lg shadow-lg bg-white border border-purple-700 ${isMinimized ? "h-auto" : "h-[80vh] min-h-[500px]"
           }`}
       >
         {/* Header */}
-        <div className="flex items-center gap-2 p-4 border-b border-gray-700 bg-gray-800/50">
+        <div className="flex items-center gap-2 p-4 border-b border-purple-700 bg-gray-50">
           <Bot className="h-6 w-6 text-primary" />
-          <h2 className="text-lg font-semibold text-white">Assistant IA</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Assistant IA</h2>
           <div className="ml-auto flex items-center gap-1">
             <Button variant="ghost" size="icon" onClick={() => setIsMinimized(!isMinimized)}>
               {isMinimized ? (
-                <Maximize2 className="h-4 w-4 text-white" />
+                <Maximize2 className="h-4 w-4 text-gray-700" />
               ) : (
-                <Minimize2 className="h-4 w-4 text-white" />
+                <Minimize2 className="h-4 w-4 text-gray-700" />
               )}
             </Button>
             <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
-              <X className="h-4 w-4 text-white" />
+              <X className="h-4 w-4 text-gray-700" />
             </Button>
           </div>
         </div>
@@ -143,12 +143,12 @@ export function LLMComponent() {
         {!isMinimized && (
           <>
             {/* Messages */}
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
+            <ScrollArea className="flex-1 p-4 overflow-y-auto">
+              <div className="space-y-4 max-w-full">
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex gap-3 ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                    className={`flex gap-3 ${message.sender === "user" ? "justify-end" : "justify-start"} w-full`}
                   >
                     {message.sender === "ai" && (
                       <div className="flex-shrink-0">
@@ -159,19 +159,21 @@ export function LLMComponent() {
                     )}
 
                     <div
-                      className={`max-w-[80%] rounded-lg p-3 ${message.sender === "user"
-                          ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white"
-                          : "bg-gray-700 text-gray-100"
+                      className={`max-w-[80%] rounded-lg p-3 break-words overflow-hidden ${message.sender === "user"
+                        ? "bg-purple-700 text-white"
+                        : "bg-gray-100 text-gray-900 border border-purple-200"
                         }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                      <p className="text-xs mt-1 text-gray-400">{formatTime(message.timestamp)}</p>
+                      <div className="overflow-x-auto">
+                        <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                      </div>
+                      <p className={`text-xs mt-1 ${message.sender === "user" ? "text-purple-200" : "text-gray-500"}`}>{formatTime(message.timestamp)}</p>
                     </div>
 
                     {message.sender === "user" && (
                       <div className="flex-shrink-0">
-                        <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                          <User className="h-4 w-4 text-primary-foreground" />
+                        <div className="h-8 w-8 rounded-full bg-purple-700 flex items-center justify-center">
+                          <User className="h-4 w-4 text-white" />
                         </div>
                       </div>
                     )}
@@ -186,7 +188,7 @@ export function LLMComponent() {
                         <Bot className="h-4 w-4 text-primary" />
                       </div>
                     </div>
-                    <div className="bg-gray-700 rounded-lg p-3">
+                    <div className="bg-gray-100 rounded-lg p-3 border border-purple-200">
                       <div className="flex gap-1">
                         <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
                         <div
@@ -205,7 +207,7 @@ export function LLMComponent() {
             </ScrollArea>
 
             {/* Input */}
-            <div className="p-4 border-t border-gray-700 bg-gray-800/50">
+            <div className="p-4 border-t border-purple-700 bg-gray-50">
               <div className="flex gap-2">
                 <Input
                   ref={inputRef}
@@ -214,13 +216,18 @@ export function LLMComponent() {
                   onKeyPress={handleKeyPress}
                   placeholder="Posez votre question sur Dijkstra..."
                   disabled={isLoading}
-                  className="flex-1 bg-gray-700 text-white border-gray-600"
+                  className="flex-1 bg-white text-black border-purple-200 focus:border-purple-700"
                 />
-                <Button onClick={handleSendMessage} disabled={!inputValue.trim() || isLoading} size="icon">
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={!inputValue.trim() || isLoading}
+                  size="icon"
+                  className="bg-purple-700 hover:bg-purple-800 text-white"
+                >
                   <Send className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-xs text-gray-400 mt-2">Appuyez sur Entrée pour envoyer</p>
+              <p className="text-xs text-gray-500 mt-2">Appuyez sur Entrée pour envoyer</p>
             </div>
           </>
         )}

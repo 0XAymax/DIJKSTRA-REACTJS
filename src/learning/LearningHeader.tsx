@@ -1,39 +1,28 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { BookOpen, ChevronLeft } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Logo from "@/components/ui/Logo";
+import { useAuth } from "@/context/AuthContext";
+import { Link } from "react-router-dom";
 
 export default function LearningHeader() {
+    const { currentUser } = useAuth();
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map(part => part[0])
+            .join('')
+            .toUpperCase();
+    };
     return (
-        <header className="border-b border-slate-700 bg-[#1e293b] px-4 py-2 flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-slate-400 hover:text-white"
-                >
-                    <ChevronLeft className="h-5 w-5" />
-                </Button>
-                <div className="flex items-center space-x-2">
-                    <div className="bg-blue-600 text-white p-1 rounded">
-                        <span className="text-xs">D</span>
-                    </div>
-                    <span className="text-sm font-medium">
-                        dijkstra-learning.com/learning
-                    </span>
-                </div>
+        <header className="border-b border-purple-700 bg-white px-4 py-1.5 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+                <Link to="/dashboard">
+                    <Logo width={140} height={140} className="filter contrast-150 brightness-70" />
+                </Link>
             </div>
             <div className="flex items-center space-x-2">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-slate-400 hover:text-white"
-                >
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    Documentation
-                </Button>
-                <Avatar className="h-8 w-8">
-                    <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                    <AvatarFallback>U</AvatarFallback>
+                <span className="hidden text-sm text-slate-600 md:block">{currentUser?.email}</span>
+                <Avatar className="h-7 w-7 border border-purple-700">
+                    <AvatarFallback className="bg-purple-50 text-purple-700 text-sm">{getInitials(currentUser?.name || '')}</AvatarFallback>
                 </Avatar>
             </div>
         </header>
