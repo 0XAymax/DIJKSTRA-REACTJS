@@ -7,10 +7,13 @@ import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import Logo from "@/components/ui/Logo"
 import { useAuth } from "@/context/AuthContext"
+import React from "react"
+import { useCourse } from "@/context/CourseContext"
 
 export default function Dashboard() {
-  const { currentUser,logout } = useAuth();
+  const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const { courses} = useCourse();
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -23,7 +26,7 @@ export default function Dashboard() {
     navigate("/login");
   };
   return (
-    <div className="min-h-screen w-full font-sans overflow-hidden">
+    <div className="min-h-screen w-full font-sans">
       <header className="border-b border-purple-700 bg-white shadow-sm">
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-2 ml-4">
@@ -71,9 +74,9 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div className="w-full px-6 py-8">
+      <div className="w-full px-6 py-8 overflow-y-auto">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div className="md:col-span-1">
+          <div className="md:col-span-1 space-y-8">
             <div className="rounded-lg border border-purple-700 bg-white p-6 shadow-sm">
               <h2 className="mb-6 text-lg font-bold text-gray-800">Your Progress</h2>
 
@@ -131,6 +134,27 @@ export default function Dashboard() {
                 <Progress value={50} className="h-2 sketch-progress" />
               </div>
             </div>
+
+            <div className="rounded-lg border border-purple-700 bg-white p-6 shadow-sm">
+              <h2 className="mb-6 text-lg font-bold text-gray-800">Course Units</h2>
+              <div className="space-y-4">
+                {courses.map((course) => (
+                  <React.Fragment key={course.id}>
+                    {course.units.map((unit, index) => (
+                      <div
+                        key={unit.id}
+                        className="flex items-center gap-4 rounded-lg border border-purple-100 bg-purple-50 p-3"
+                      >
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-purple-700">
+                          {index + 1}
+                        </div>
+                        <span className="text-sm font-medium text-gray-800">{unit.name}</span>
+                      </div>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="md:col-span-3">
@@ -141,58 +165,59 @@ export default function Dashboard() {
                   View all courses
                 </Button>
               </div>
-
-              <Card className="border border-purple-700 sketch-card overflow-hidden">
-                <div className="grid grid-cols-1 md:grid-cols-3">
-                  <div className="bg-purple-50 p-6 md:col-span-1">
-                    <div className="aspect-video w-full rounded-lg bg-white sketch-image flex items-center justify-center">
-                      <div className="text-center">
-                        <LineChart className="h-16 w-16 mx-auto text-purple-300 mb-2" />
-                        <span className="text-sm text-purple-700 font-medium">Graph Algorithms</span>
+              {courses.map((course) => (
+                <Card className="border border-purple-700 sketch-card overflow-hidden">
+                  <div className="grid grid-cols-1 md:grid-cols-3">
+                    <div className="bg-purple-50 p-6 md:col-span-1">
+                      <div className="aspect-video w-full rounded-lg bg-white sketch-image flex items-center justify-center">
+                        <div className="text-center">
+                          <LineChart className="h-16 w-16 mx-auto text-purple-300 mb-2" />
+                          <span className="text-sm text-purple-700 font-medium">Graph Algorithms</span>
+                        </div>
                       </div>
                     </div>
+
+                    <div className="p-6 md:col-span-2">
+
+                      <CardHeader className="p-0 pb-4">
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-xl text-gray-800">{course.name}</CardTitle>
+                        </div>
+                        <CardDescription className="flex items-center gap-6 pt-3">
+                          <div className="flex items-center gap-2">
+                            <Book className="h-4 w-4 text-purple-500" />
+                            <span className="text-gray-600">8 lessons</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <LineChart className="h-4 w-4 text-purple-500" />
+                            <span className="text-gray-600">4 practice sessions</span>
+                          </div>
+                        </CardDescription>
+                      </CardHeader>
+
+                      <CardContent className="p-0 pb-6">
+                        <p className="text-gray-600 leading-relaxed">
+                          {course.description}
+                        </p>
+                      </CardContent>
+
+                      <CardFooter className="flex-col items-start gap-5 p-0">
+                        <Link to="/learning">
+                          <Button className="sketch-button px-6 bg-purple-700 hover:bg-purple-800 cursor-pointer">Continue Learning</Button>
+                        </Link>
+                        <div className="w-full">
+                          <div className="mb-2 flex items-center justify-between">
+                            <span className="text-xs text-gray-500">Progress</span>
+                            <span className="text-xs font-medium text-purple-700">50%</span>
+                          </div>
+                          <Progress value={50} className="h-2 sketch-progress" />
+                        </div>
+                      </CardFooter>
+                    </div>
                   </div>
+                </Card>
+              ))}
 
-                  <div className="p-6 md:col-span-2">
-                    <CardHeader className="p-0 pb-4">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-xl text-gray-800">Dijkstra's Algorithm</CardTitle>
-                      </div>
-                      <CardDescription className="flex items-center gap-6 pt-3">
-                        <div className="flex items-center gap-2">
-                          <Book className="h-4 w-4 text-purple-500" />
-                          <span className="text-gray-600">8 lessons</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <LineChart className="h-4 w-4 text-purple-500" />
-                          <span className="text-gray-600">4 practice sessions</span>
-                        </div>
-                      </CardDescription>
-                    </CardHeader>
-
-                    <CardContent className="p-0 pb-6">
-                      <p className="text-gray-600 leading-relaxed">
-                        Learn how to implement Dijkstra's algorithm for finding the shortest paths between nodes in a
-                        graph. This course covers the algorithm's principles, implementation details, and practical
-                        applications in network routing and GPS navigation systems.
-                      </p>
-                    </CardContent>
-
-                    <CardFooter className="flex-col items-start gap-5 p-0">
-                      <Link to="/learning">
-                        <Button className="sketch-button px-6 bg-purple-700 hover:bg-purple-800 cursor-pointer">Continue Learning</Button>
-                      </Link>
-                      <div className="w-full">
-                        <div className="mb-2 flex items-center justify-between">
-                          <span className="text-xs text-gray-500">Progress</span>
-                          <span className="text-xs font-medium text-purple-700">50%</span>
-                        </div>
-                        <Progress value={50} className="h-2 sketch-progress" />
-                      </div>
-                    </CardFooter>
-                  </div>
-                </div>
-              </Card>
             </section>
           </div>
         </div>
