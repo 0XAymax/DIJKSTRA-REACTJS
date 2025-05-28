@@ -49,9 +49,7 @@ export default function LearningPage() {
                 {Allunits.map((unit) => (
                   <div key={unit.id} className="mb-2">
                     <div
-                      className={`flex items-center p-2 hover:bg-slate-100 rounded-md cursor-pointer ${
-                        !unit.unlocked ? "opacity-60" : ""
-                      } ${selectedUnit === unit.id ? "bg-slate-100" : ""}`}
+                      className={`flex items-center p-2 hover:bg-slate-100 rounded-md cursor-pointer ${selectedUnit === unit.id ? "bg-slate-100" : ""}`}
                       onClick={() => toggleUnit(unit.id)}
                     >
                       {expandedUnits[unit.id] ? (
