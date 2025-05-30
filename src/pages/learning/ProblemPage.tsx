@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import PracticeProblem from "./PracticeProblem";
 import { useAuth } from "@/context/AuthContext";
 import LessonServices from "@/api/lesson.service";
-import { useEffect, useState } from "react";
 
 export default function ProblemPage() {
   const {currentUser} = useAuth();
@@ -20,7 +19,7 @@ export default function ProblemPage() {
   const currentProblem = problems[index];
   const nextProblem = problems[index + 1];
   const prevProblem = problems[index - 1];
-  const [isCompleted, setIsCompleted] = useState(false);
+
   const isLessonCompleted = async () => {
     if (!currentUser) {
       console.error("User not authenticated");
@@ -38,14 +37,6 @@ export default function ProblemPage() {
       return false;
     }
   };
-  useEffect(() => {
-    const checkLesson = async () => {
-      const completed = await isLessonCompleted();
-      setIsCompleted(completed ?? false);
-    };
-
-    checkLesson();
-  });
   
   const handleCompleteLesson = async() => {
     if (!currentUser) {
@@ -56,13 +47,19 @@ export default function ProblemPage() {
       console.error("Lesson ID is not provided");
       return;
     }
-    try {
-      const response = await LessonServices.CompleteLesson(currentUser.id, lessonId);
-      if(response.status === 200) {
-        console.log("Lesson completed successfully");
+    const completed = await isLessonCompleted();
+    if (!completed) {
+      try {
+        const response = await LessonServices.CompleteLesson(
+          currentUser.id,
+          lessonId
+        );
+        if (response.status === 200) {
+          console.log("Lesson completed successfully");
+        }
+      } catch (error) {
+        console.error("Error completing lesson:", error);
       }
-    } catch (error) {
-      console.error("Error completing lesson:", error);
     }
   }
   return (
@@ -102,20 +99,12 @@ export default function ProblemPage() {
             </Link>
           ) : (
             <Link to={`/learning/${lessonId}`}>
-              {isCompleted ? (
-                <Button
-                  className="bg-green-600 hover:bg-green-500 cursor-pointer"
-                >
-                  Finish
-                </Button>
-              ) : (
                 <Button
                   className="bg-green-600 hover:bg-green-500 cursor-pointer"
                   onClick={handleCompleteLesson}
                 >
                   Finish
                 </Button>
-              )}
             </Link>
           )}
         </div>
