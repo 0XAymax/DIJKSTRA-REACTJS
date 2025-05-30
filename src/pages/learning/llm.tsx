@@ -20,11 +20,11 @@ export function LLMComponent() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      content: "Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider aujourd'hui ?",
+      content:"Hello! I am Vertex0, your AI assistant. How can I help you today?",
       sender: "ai",
       timestamp: new Date(),
     },
-  ])
+  ]);
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
@@ -61,10 +61,10 @@ export function LLMComponent() {
       // Ajouter la réponse de l'IA
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: response.response || "Désolé, je n'ai pas pu traiter votre demande.",
+        content: response.response || "Sorry, I couldn't process your request.",
         sender: "ai",
         timestamp: new Date(),
-      }
+      };
 
       setMessages((prev) => [...prev, aiMessage])
     } catch (error: unknown) {
@@ -73,13 +73,13 @@ export function LLMComponent() {
       // Message d'erreur
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: "Désolé, une erreur s'est produite. Veuillez réessayer.",
+        content: "Sorry, an error occurred. Please try again.",
         sender: "ai",
         timestamp: new Date(),
-      }
+      };
 
       setMessages((prev) => [...prev, errorMessage])
-      toast.error("Erreur lors de l'envoi du message")
+      toast.error("Error while sending the message.");
     } finally {
       setIsLoading(false)
       inputRef.current?.focus()
@@ -119,22 +119,31 @@ export function LLMComponent() {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <div
-        className={`flex flex-col w-full max-w-4xl mx-auto rounded-lg shadow-lg bg-white border border-purple-700 ${isMinimized ? "h-auto" : "h-[80vh] min-h-[500px]"
-          }`}
+        className={`flex flex-col w-full max-w-4xl mx-auto rounded-lg shadow-lg bg-white border border-purple-700 ${
+          isMinimized ? "h-auto" : "h-[80vh] min-h-[500px]"
+        }`}
       >
         {/* Header */}
         <div className="flex items-center gap-2 p-4 border-b border-purple-700 bg-gray-50">
           <Bot className="h-6 w-6 text-primary" />
-          <h2 className="text-lg font-semibold text-gray-900">Assistant IA</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Vertex0</h2>
           <div className="ml-auto flex items-center gap-1">
-            <Button variant="ghost" size="icon" onClick={() => setIsMinimized(!isMinimized)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMinimized(!isMinimized)}
+            >
               {isMinimized ? (
                 <Maximize2 className="h-4 w-4 text-gray-700" />
               ) : (
                 <Minimize2 className="h-4 w-4 text-gray-700" />
               )}
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen(false)}
+            >
               <X className="h-4 w-4 text-gray-700" />
             </Button>
           </div>
@@ -148,7 +157,11 @@ export function LLMComponent() {
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex gap-3 ${message.sender === "user" ? "justify-end" : "justify-start"} w-full`}
+                    className={`flex gap-3 ${
+                      message.sender === "user"
+                        ? "justify-end"
+                        : "justify-start"
+                    } w-full`}
                   >
                     {message.sender === "ai" && (
                       <div className="flex-shrink-0">
@@ -159,15 +172,26 @@ export function LLMComponent() {
                     )}
 
                     <div
-                      className={`max-w-[80%] rounded-lg p-3 break-words overflow-hidden ${message.sender === "user"
-                        ? "bg-purple-700 text-white"
-                        : "bg-gray-100 text-gray-900 border border-purple-200"
-                        }`}
+                      className={`max-w-[80%] rounded-lg p-3 break-words overflow-hidden ${
+                        message.sender === "user"
+                          ? "bg-purple-700 text-white"
+                          : "bg-gray-100 text-gray-900 border border-purple-200"
+                      }`}
                     >
                       <div className="overflow-x-auto">
-                        <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                        <p className="text-sm whitespace-pre-wrap break-words">
+                          {message.content}
+                        </p>
                       </div>
-                      <p className={`text-xs mt-1 ${message.sender === "user" ? "text-purple-200" : "text-gray-500"}`}>{formatTime(message.timestamp)}</p>
+                      <p
+                        className={`text-xs mt-1 ${
+                          message.sender === "user"
+                            ? "text-purple-200"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {formatTime(message.timestamp)}
+                      </p>
                     </div>
 
                     {message.sender === "user" && (
@@ -214,7 +238,7 @@ export function LLMComponent() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Posez votre question sur Dijkstra..."
+                  placeholder="Ask your question about Dijkstra..."
                   disabled={isLoading}
                   className="flex-1 bg-white text-black border-purple-200 focus:border-purple-700"
                 />
@@ -227,13 +251,13 @@ export function LLMComponent() {
                   <Send className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-xs text-gray-500 mt-2">Appuyez sur Entrée pour envoyer</p>
+              <p className="text-xs text-gray-500 mt-2">Press Enter to send</p>
             </div>
           </>
         )}
       </div>
     </div>
-  )
+  );
 }
 
 // Version alternative avec hauteur flexible
