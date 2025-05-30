@@ -12,8 +12,10 @@ export default function LearningPage() {
         {/* Left Sidebar - Course Units */}
         <LearningSideBar />
         {/* Main Content */}
-        <div className="flex-1 flex bg-white">
-          <Outlet />
+        <div className="flex-1 flex flex-col bg-white relative">
+          <div className="flex-1 overflow-y-auto">
+            <Outlet />
+          </div>
           <GraphoAssistant />
         </div>
       </div>
