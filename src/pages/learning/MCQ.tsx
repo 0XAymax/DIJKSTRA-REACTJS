@@ -62,7 +62,7 @@ export default function MCQComponent({
         }
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         if (selectedChoice !== null) {
             setIsSubmitted(true);
         }
@@ -81,7 +81,8 @@ export default function MCQComponent({
             `
             handleSendMessage(input,context);
         } else {
-            if (!isProblemCompleted()) {
+            const completed = await isProblemCompleted();
+            if (!completed) {
                 handleProblemComplete();
             }
         }
