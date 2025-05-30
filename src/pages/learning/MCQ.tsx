@@ -2,11 +2,12 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle, XCircle } from "lucide-react"
+import { useLLMContext } from "@/context/LLMContext"
 
 interface MCQComponentProps {
     question: string
     choices: string[]
-    correctIndex: number 
+    correctIndex: number
 }
 
 export default function MCQComponent({
@@ -16,7 +17,7 @@ export default function MCQComponent({
 }: MCQComponentProps) {
     const [selectedChoice, setSelectedChoice] = useState<number | null>(null)
     const [isSubmitted, setIsSubmitted] = useState(false)
-
+    const { setIsOpen,handleSendMessage} = useLLMContext();
     const handleChoiceSelect = (index: number) => {
         if (!isSubmitted) {
             setSelectedChoice(index)
@@ -25,7 +26,22 @@ export default function MCQComponent({
 
     const handleSubmit = () => {
         if (selectedChoice !== null) {
-            setIsSubmitted(true)
+            setIsSubmitted(true);
+        }
+        if (!isCorrect) {
+            setIsOpen(true);
+            const input=`I selected: ${selectedChoice}`;
+            const context =`
+                The user answered a multiple-choice question incorrectly. Here are the details:
+
+                - **Question**: ${question}
+                - **Choices**: ${choices.join(", ")}
+                - **Correct Answer**: ${choices[correctIndex]}
+                - **User's Answer**: ${selectedChoice !== null ? choices[selectedChoice] : "No answer selected"}
+
+                Your job is to explain why the user's answer is incorrect and guide them toward the correct reasoning, **without directly giving the answer away** at first. Encourage critical thinking, and optionally offer a hint before revealing the full explanation.
+            `
+            handleSendMessage(input,context);
         }
     }
 
@@ -34,7 +50,7 @@ export default function MCQComponent({
         setIsSubmitted(false)
     }
 
-    const isCorrect = selectedChoice !== null && selectedChoice === correctIndex - 1
+    const isCorrect = selectedChoice !== null && selectedChoice === correctIndex;
 
     const getChoiceStyle = (index: number) => {
         if (!isSubmitted) {
@@ -46,7 +62,7 @@ export default function MCQComponent({
         if (selectedChoice === index) {
             return isCorrect ? "border-green-500 bg-green-50 dark:bg-green-950" : "border-red-500 bg-red-50 dark:bg-red-950"
         }
-        if (index === correctIndex - 1) {
+        if (index === correctIndex) {
             return "border-green-500 bg-green-50 dark:bg-green-950"
         }
 
@@ -78,7 +94,7 @@ export default function MCQComponent({
                                         )}
                                     </div>
                                 )}
-                                {isSubmitted && index === correctIndex - 1 && selectedChoice !== index && (
+                                {isSubmitted && index === correctIndex && selectedChoice !== index && (
                                     <CheckCircle className="w-5 h-5 text-green-600" />
                                 )}
                             </div>
@@ -94,8 +110,8 @@ export default function MCQComponent({
                     <div className="space-y-3">
                         <div
                             className={`p-4 rounded-lg text-center font-medium ${isCorrect
-                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                                    : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                                 }`}
                         >
                             {isCorrect ? (
@@ -106,7 +122,7 @@ export default function MCQComponent({
                             ) : (
                                 <div className="flex items-center justify-center gap-2">
                                     <XCircle className="w-5 h-5" />
-                                    Incorrect. The correct answer is "{choices[correctIndex - 1]}"
+                                    Incorrect. The correct answer is "{choices[correctIndex]}"
                                 </div>
                             )}
                         </div>
