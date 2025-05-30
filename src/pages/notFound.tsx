@@ -7,6 +7,7 @@ export default function NotFound() {
       <p className="text-gray-600 mb-8">The page you're looking for doesn't exist.</p>
       <Link to="/" className="text-purple-600 hover:text-purple-700 font-medium">
         Go back home
+        
       </Link>
     </div>
   );
