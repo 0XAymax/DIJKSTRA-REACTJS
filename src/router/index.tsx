@@ -6,6 +6,8 @@ import LearningPage from "../pages/learning/learning.tsx";
 import Home from "../pages/marketing/page.tsx";
 import Dashboard from "@/pages/dashboard/dashboard.tsx";
 import AuthGuard from "@/lib/AuthGuard.tsx";
+import LessonPage from "@/pages/learning/LessonPage.tsx";
+import ProblemPage from "@/pages/learning/ProblemPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,24 @@ const router = createBrowserRouter([
         <LearningPage />
       </AuthGuard>
     ),
+    children: [
+      {
+        path: ":lessonId",
+        element: (
+          <AuthGuard>
+            <LessonPage />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: "problem/:problemId",
+        element: (
+          <AuthGuard>
+            <ProblemPage />
+          </AuthGuard>
+        ),
+      },
+    ],
   },
 
   {
