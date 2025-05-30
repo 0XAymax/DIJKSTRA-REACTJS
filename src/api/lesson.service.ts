@@ -1,4 +1,4 @@
-import type { CreateLessonRequest, UpdateLessonRequest } from "@/types";
+import type { CompletionsResponse, CreateLessonRequest, UpdateLessonRequest } from "@/types";
 import api from "./config"
 
 const LessonServices = {
@@ -17,6 +17,14 @@ const LessonServices = {
   deleteLesson: async (id: string) => {
       const response = await api.delete(`/lessons/${id}`);
       return response.data;
+  },
+  CompleteLesson: async (userId:string,lessonId: string) => {
+    const response = await api.post(`/users/${userId}/lessons/${lessonId}/complete`);
+    return response.data;
+  },
+  getUserCompletions: async (userId: string) :Promise<CompletionsResponse> => {
+    const response = await api.get(`/users/${userId}/complete`);
+    return response.data;
   }
 };
 export default LessonServices;

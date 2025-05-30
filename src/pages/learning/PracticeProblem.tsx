@@ -13,11 +13,11 @@ function PracticeProblem({ problem }: { problem: PracticeProblems }) {
   const answer = parsedData.answer || 0;
   const question = problem?.question || "";
   const Problemtype = problem?.type;
-
+  const problemId = problem.id;
   return (
     <>
       {Problemtype === "multiple_choice" && (
-        <MCQComponent question={question} choices={choices} correctIndex={answer} />
+        <MCQComponent question={question} choices={choices} correctIndex={answer} problemId={problemId} />
       )}
       {Problemtype === "interactive_graph" && <InteractiveGraph />}
     </>
