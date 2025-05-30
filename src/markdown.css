@@ -39,7 +39,8 @@
   color: #111827;
 }
 
-.markdown ul, .markdown ol {
+.markdown ul,
+.markdown ol {
   margin: 1.5rem 0;
   padding-left: 1.5rem;
 }
@@ -94,33 +95,4 @@
   padding: 0;
   color: #e2e8f0;
   font-size: 0.875rem;
-}
-
-.mcq {
-  list-style-type: none;
-  padding: 0;
-  margin: 1.5rem 0;
-}
-
-.mcq li {
-  padding: 1rem 1.5rem;
-  margin-bottom: 0.75rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 1.125rem;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-.mcq li:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-}
-
-.mcq li.correct {
-  background-color: #dcfce7;
-  border-color: #86efac;
-  color: #166534;
-  font-weight: 500;
 }
