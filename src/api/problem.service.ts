@@ -24,5 +24,12 @@ const ProblemServices = {
     );
     return response.data;
   },
+  CompleteProblem: async (userId: string, problemId: string) => {
+    console.log("Completing problem for user:", userId, "Problem ID:", problemId);
+    const response = await api.post(
+      `/users/${userId}/practice_problems/${problemId}/complete`
+    );
+    return response;
+  }
 };
 export default ProblemServices;

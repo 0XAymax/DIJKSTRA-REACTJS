@@ -78,3 +78,20 @@ export interface UpdateProblemRequest {
   data: string;
   unit_id: string;
 }
+export interface Completedlesson {
+  id: string;
+  user_id: string;
+  lesson_id: string;
+  completed_at: Date;
+}
+export interface CompletedProblem{
+  id: string;
+  user_id: string;
+  problem_id: string;
+  completed_at: Date;
+}
+export interface CompletionsResponse{
+  user_id: string;
+  lessons: Completedlesson[];
+  practice_problems: CompletedProblem[];
+}

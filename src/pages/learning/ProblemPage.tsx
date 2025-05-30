@@ -3,8 +3,12 @@ import { Link, useSearchParams } from "react-router-dom";
 import "@/markdown.css";
 import { Button } from "@/components/ui/button";
 import PracticeProblem from "./PracticeProblem";
+import { useAuth } from "@/context/AuthContext";
+import LessonServices from "@/api/lesson.service";
+import { useEffect, useState } from "react";
 
 export default function ProblemPage() {
+  const {currentUser} = useAuth();
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("lessonId");
   const index = parseInt(searchParams.get("index") || "0", 10);
@@ -16,7 +20,51 @@ export default function ProblemPage() {
   const currentProblem = problems[index];
   const nextProblem = problems[index + 1];
   const prevProblem = problems[index - 1];
+  const [isCompleted, setIsCompleted] = useState(false);
+  const isLessonCompleted = async () => {
+    if (!currentUser) {
+      console.error("User not authenticated");
+      return;
+    }
+    try {
+      const response = await LessonServices.getUserCompletions(currentUser.id);
+      if (response) {
+        return response.lessons.some(
+          (completion) => completion.lesson_id === lessonId
+        );
+      }
+    } catch (error) {
+      console.error("Error checking lesson completion:", error);
+      return false;
+    }
+  };
+  useEffect(() => {
+    const checkLesson = async () => {
+      const completed = await isLessonCompleted();
+      setIsCompleted(completed ?? false);
+    };
 
+    checkLesson();
+  });
+  
+  const handleCompleteLesson = async() => {
+    if (!currentUser) {
+      console.error("User not authenticated");
+      return;
+    }
+    if (!lessonId) {
+      console.error("Lesson ID is not provided");
+      return;
+    }
+    try {
+      const response = await LessonServices.CompleteLesson(currentUser.id, lessonId);
+      if(response.status === 200) {
+        console.log("Lesson completed successfully");
+      }
+    } catch (error) {
+      console.error("Error completing lesson:", error);
+    }
+  }
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1 flex justify-center px-4 py-8">
@@ -54,9 +102,20 @@ export default function ProblemPage() {
             </Link>
           ) : (
             <Link to={`/learning/${lessonId}`}>
-              <Button className="bg-green-600 hover:bg-green-500 cursor-pointer">
-                Finish
-              </Button>
+              {isCompleted ? (
+                <Button
+                  className="bg-green-600 hover:bg-green-500 cursor-pointer"
+                >
+                  Finish
+                </Button>
+              ) : (
+                <Button
+                  className="bg-green-600 hover:bg-green-500 cursor-pointer"
+                  onClick={handleCompleteLesson}
+                >
+                  Finish
+                </Button>
+              )}
             </Link>
           )}
         </div>
