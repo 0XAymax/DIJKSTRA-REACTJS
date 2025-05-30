@@ -6,22 +6,19 @@ export interface AIChatRequest {
 
 export interface AIChatResponse {
   response: string
-  // Ajoutez d'autres propriétés selon votre API
 }
 
 const AIService = {
-  sendMessage: async (userInput: string): Promise<AIChatResponse> => {
+  sendMessage: async (userInput: string, context?:string): Promise<AIChatResponse> => {
     try {
       console.log("Sending message to AI:", userInput)
       const response = await api.post("/api/ai-chat", {
         user_input: userInput,
+        additional_context: context
       })
 
-      // 🔍 DEBUG: Afficher la structure complète de la réponse
       console.log("AI Response received:", response.data)
-      console.log("Full response structure:", JSON.stringify(response.data, null, 2))
 
-      // 🔍 Vérifier différentes structures possibles
       if (response.data.response) {
         console.log("Found response.response:", response.data.response)
         return { response: response.data.response }
