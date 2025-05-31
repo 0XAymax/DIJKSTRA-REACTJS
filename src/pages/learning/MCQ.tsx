@@ -113,68 +113,82 @@ export default function MCQComponent({
     }
 
     return (
-        <Card className="w-full max-w-2xl mx-auto">
-            <CardHeader>
-                <CardTitle className="text-xl font-semibold">{question}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <div className="space-y-3">
-                    {choices.map((choice, index) => (
-                        <div
-                            key={index}
-                            onClick={() => handleChoiceSelect(index)}
-                            className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${getChoiceStyle(index)} ${!isSubmitted ? "hover:shadow-sm" : "cursor-default"
-                                }`}
-                        >
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium">{choice}</span>
-                                {isSubmitted && selectedChoice === index && (
-                                    <div className="flex items-center">
-                                        {isCorrect ? (
-                                            <CheckCircle className="w-5 h-5 text-green-600" />
-                                        ) : (
-                                            <XCircle className="w-5 h-5 text-red-600" />
-                                        )}
-                                    </div>
-                                )}
-                                {isSubmitted && index === correctIndex && selectedChoice !== index && (
-                                    <CheckCircle className="w-5 h-5 text-green-600" />
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {!isSubmitted ? (
-                    <Button onClick={handleSubmit} disabled={selectedChoice === null} className="w-full">
-                        Submit Answer
-                    </Button>
-                ) : (
-                    <div className="space-y-3">
-                        <div
-                            className={`p-4 rounded-lg text-center font-medium ${isCorrect
-                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                                }`}
-                        >
-                            {isCorrect ? (
-                                <div className="flex items-center justify-center gap-2">
-                                    <CheckCircle className="w-5 h-5" />
-                                    Correct! Well done!
-                                </div>
-                            ) : (
-                                <div className="flex items-center justify-center gap-2">
-                                    <XCircle className="w-5 h-5" />
-                                    Incorrect. The correct answer is "{choices[correctIndex]}"
-                                </div>
-                            )}
-                        </div>
-                        <Button onClick={handleReset} variant="outline" className="w-full">
-                            Try Again
-                        </Button>
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold">{question}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-3">
+            {choices.map((choice, index) => (
+              <div
+                key={index}
+                onClick={() => handleChoiceSelect(index)}
+                className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${getChoiceStyle(
+                  index
+                )} ${!isSubmitted ? "hover:shadow-sm" : "cursor-default"}`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{choice}</span>
+                  {isSubmitted && selectedChoice === index && (
+                    <div className="flex items-center">
+                      {isCorrect ? (
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-red-600" />
+                      )}
                     </div>
+                  )}
+                  {isSubmitted &&
+                    index === correctIndex &&
+                    selectedChoice !== index && (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {!isSubmitted ? (
+            <Button
+              onClick={handleSubmit}
+              disabled={selectedChoice === null}
+              className="w-full"
+            >
+              Submit Answer
+            </Button>
+          ) : (
+            <div className="space-y-3">
+              <div
+                className={`p-4 rounded-lg text-center font-medium ${
+                  isCorrect
+                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                    : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                }`}
+              >
+                {isCorrect ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle className="w-5 h-5" />
+                    Correct! Well done!
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-2">
+                    <XCircle className="w-5 h-5" />
+                    Incorrect. The correct answer is "{choices[correctIndex]}"
+                  </div>
                 )}
-            </CardContent>
-        </Card>
-    )
+              </div>
+              {!isCorrect && (
+                <Button
+                  onClick={handleReset}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Try Again
+                </Button>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
 }
