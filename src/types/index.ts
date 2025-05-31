@@ -25,6 +25,7 @@ export interface Unit {
   id: string;
   name: string;
   course_id: string;
+  order: number;
   lesson: Lesson;
   practice_problems: PracticeProblems[];
 }
@@ -94,4 +95,11 @@ export interface CompletionsResponse{
   user_id: string;
   lessons: Completedlesson[];
   practice_problems: CompletedProblem[];
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  description: string;
+  learning_level: number;
 }
