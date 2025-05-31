@@ -17,7 +17,7 @@ function PracticeProblem({ problem }: { problem: PracticeProblems }) {
   return (
     <>
       {Problemtype === "multiple_choice" && (
-        <MCQComponent question={question} choices={choices} correctIndex={answer} problemId={problemId} />
+        <MCQComponent key={problemId} question={question} choices={choices} correctIndex={answer} problemId={problemId} />
       )}
       {Problemtype === "interactive_graph" && <InteractiveGraph />}
     </>
