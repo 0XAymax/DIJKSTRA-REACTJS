@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Book, BookOpen, Clock, Home, LayoutDashboard, LineChart, LogOut, Settings } from "lucide-react";
+import { Book, BookOpen, Clock, LayoutDashboard, LineChart, LogOut } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Logo from "@/components/ui/Logo";
 import { useAuth } from "@/context/AuthContext";
 import SkillServices from "@/api/skill.service";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCourse } from "@/context/CourseContext";
 import { motion } from "framer-motion";
 
@@ -84,30 +84,12 @@ export default function Dashboard() {
 
           <nav className="hidden md:block">
             <ul className="flex space-x-8">
-              <li>
-                <Link
-                  to="#"
-                  className="flex items-center gap-2 text-gray-600 hover:text-purple-700 transition-colors"
-                >
-                  <Home className="h-4 w-4" />
-                  <span>Home</span>
-                </Link>
-              </li>
-              <li>
+     
                 <Link to="#" className="flex items-center gap-2 text-purple-700 border-b-2 border-purple-700 pb-1">
                   <LayoutDashboard className="h-4 w-4" />
                   <span>Dashboard</span>
                 </Link>
-              </li>
-              <li>
-                <Link
-                  to="#"
-                  className="flex items-center gap-2 text-gray-600 hover:text-purple-700 transition-colors"
-                >
-                  <Settings className="h-4 w-4" />
-                  <span>Settings</span>
-                </Link>
-              </li>
+              
             </ul>
           </nav>
 
