@@ -1,19 +1,31 @@
-import { Link, useNavigate } from "react-router-dom"
-import { Book, BookOpen, Clock, Home, LayoutDashboard, LineChart, LogOut, Settings } from "lucide-react"
-import { Progress } from "@/components/ui/progress"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import Logo from "@/components/ui/Logo"
-import { useAuth } from "@/context/AuthContext"
-import React from "react"
-import { useCourse } from "@/context/CourseContext"
+import { Link, useNavigate } from "react-router-dom";
+import { Book, BookOpen, Clock, Home, LayoutDashboard, LineChart, LogOut, Settings } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Logo from "@/components/ui/Logo";
+import { useAuth } from "@/context/AuthContext";
+import SkillServices from "@/api/skill.service";
+import React, { useEffect, useState } from "react";
+import { useCourse } from "@/context/CourseContext";
+import { motion } from "framer-motion";
 
 export default function Dashboard() {
   const { currentUser, logout } = useAuth();
+  
+  interface Skill {
+    id: string;
+    name: string;
+    progress: number;
+    total: number;
+  }
+
+  const [skills, setSkills] = useState<Skill[]>([]);
   const navigate = useNavigate();
-  const { courses} = useCourse();
+  const { courses } = useCourse();
+  
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -21,10 +33,47 @@ export default function Dashboard() {
       .join('')
       .toUpperCase();
   };
+  
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+
+  const handleViewUnits = () => {
+    navigate("/units");
+  };
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      if (currentUser?.id) {
+        try {
+          const data = await SkillServices.getUserSkill(currentUser.id);
+          console.log("Skills data from API:", data);
+          setSkills(data);
+        } catch (error) {
+          console.error("Erreur lors du chargement des skills :", error);
+        }
+      }
+    };
+    fetchSkills();
+  }, [currentUser]);
+
+  // Configuration du graph aléatoire
+  const graphNodes = [
+    { id: 1, cx: 40, cy: 60 },
+    { id: 2, cx: 100, cy: 30 },
+    { id: 3, cx: 160, cy: 60 },
+    { id: 4, cx: 100, cy: 90 }
+  ];
+
+  const graphEdges = [
+    { id: 1, x1: 40, y1: 60, x2: 100, y2: 30 },
+    { id: 2, x1: 100, y1: 30, x2: 160, y2: 60 },
+    { id: 3, x1: 160, y1: 60, x2: 100, y2: 90 },
+    { id: 4, x1: 100, y1: 90, x2: 40, y2: 60 },
+    { id: 5, x1: 40, y1: 60, x2: 160, y2: 60, dashed: true }
+  ];
+
   return (
     <div className="min-h-screen w-full font-sans">
       <header className="border-b border-purple-700 bg-white shadow-sm">
@@ -73,7 +122,7 @@ export default function Dashboard() {
           </div>
         </div>
       </header>
-
+      
       <div className="w-full px-6 py-8 overflow-y-auto">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="md:col-span-1 space-y-8">
@@ -81,37 +130,27 @@ export default function Dashboard() {
               <h2 className="mb-6 text-lg font-bold text-gray-800">Your Progress</h2>
 
               <div className="space-y-5">
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-medium">Basics</span>
-                    <span className="text-xs font-medium text-purple-700">426/800</span>
-                  </div>
-                  <Progress value={53} className="h-2 sketch-progress" />
-                </div>
+                {skills.length > 0 ? (
+                  skills.map((skill) => {
+                    const progress = Number(skill.progress) || 0;
+                    const total = Number(skill.total) || 1;
+                    const percentage = Math.min((progress / total) * 100, 100);
 
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-medium">Traversal</span>
-                    <span className="text-xs font-medium text-purple-700">210/300</span>
-                  </div>
-                  <Progress value={70} className="h-2 sketch-progress" />
-                </div>
-
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-medium">Paths</span>
-                    <span className="text-xs font-medium text-purple-700">120/400</span>
-                  </div>
-                  <Progress value={30} className="h-2 sketch-progress" />
-                </div>
-
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-medium">Skill 4</span>
-                    <span className="text-xs font-medium text-purple-700">50/200</span>
-                  </div>
-                  <Progress value={25} className="h-2 sketch-progress" />
-                </div>
+                    return (
+                      <div key={skill.id}>
+                        <div className="mb-2 flex items-center justify-between">
+                          <span className="text-sm font-medium">{skill.name}</span>
+                          <span className="text-xs font-medium text-purple-700">
+                            {progress}/{total}
+                          </span>
+                        </div>
+                        <Progress value={percentage} className="h-2 sketch-progress" />
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="text-sm text-gray-500">No skills yet.</p>
+                )}
               </div>
 
               <Separator className="my-6 border-dashed" />
@@ -134,51 +173,85 @@ export default function Dashboard() {
                 <Progress value={50} className="h-2 sketch-progress" />
               </div>
             </div>
-
-            <div className="rounded-lg border border-purple-700 bg-white p-6 shadow-sm">
-              <h2 className="mb-6 text-lg font-bold text-gray-800">Course Units</h2>
-              <div className="space-y-4">
-                {courses.map((course) => (
-                  <React.Fragment key={course.id}>
-                    {course.units.map((unit, index) => (
-                      <div
-                        key={unit.id}
-                        className="flex items-center gap-4 rounded-lg border border-purple-100 bg-purple-50 p-3"
-                      >
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-purple-700">
-                          {index + 1}
-                        </div>
-                        <span className="text-sm font-medium text-gray-800">{unit.name}</span>
-                      </div>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
           </div>
 
           <div className="md:col-span-3">
             <section>
-              <div className="flex items-center justify-between mb-14 ">
+              <div className="flex items-center justify-between mb-14">
                 <h2 className="text-2xl font-bold text-gray-800">Courses</h2>
-                <Button variant="ghost" className="text-sm text-purple-700 hover:text-purple-800 hover:bg-purple-50">
-                  View all courses
+                <Button 
+                  variant="ghost" 
+                  className="text-sm text-purple-700 hover:text-purple-800 hover:bg-purple-50"
+                  onClick={handleViewUnits}
+                >
+                  View all units
                 </Button>
               </div>
+              
               {courses.map((course) => (
-                <Card className="border border-purple-700 sketch-card overflow-hidden">
+                <Card className="border border-purple-700 sketch-card overflow-hidden mb-6" key={course.id}>
                   <div className="grid grid-cols-1 md:grid-cols-3">
                     <div className="bg-purple-50 p-6 md:col-span-1">
-                      <div className="aspect-video w-full rounded-lg bg-white sketch-image flex items-center justify-center">
-                        <div className="text-center">
-                          <LineChart className="h-16 w-16 mx-auto text-purple-300 mb-2" />
-                          <span className="text-sm text-purple-700 font-medium">Graph Algorithms</span>
-                        </div>
+                      <div className="aspect-video w-full rounded-lg bg-white sketch-image flex items-center justify-center p-4">
+                        <motion.svg 
+                          width="100%" 
+                          height="100%" 
+                          viewBox="0 0 200 120"
+                          initial="hidden"
+                          animate="visible"
+                        >
+                          {graphEdges.map((edge) => (
+                            <motion.line
+                              key={edge.id}
+                              x1={edge.x1}
+                              y1={edge.y1}
+                              x2={edge.x2}
+                              y2={edge.y2}
+                              stroke="#8b5cf6"
+                              strokeWidth="2"
+                              strokeDasharray={edge.dashed ? "4 2" : "0"}
+                              variants={{
+                                hidden: { opacity: 0, pathLength: 0 },
+                                visible: { 
+                                  opacity: 1, 
+                                  pathLength: 1,
+                                  transition: { 
+                                    delay: edge.id * 0.2,
+                                    duration: 0.8,
+                                    ease: "easeInOut"
+                                  }
+                                }
+                              }}
+                            />
+                          ))}
+                          
+                          {graphNodes.map((node) => (
+                            <motion.circle
+                              key={node.id}
+                              cx={node.cx}
+                              cy={node.cy}
+                              r="10"
+                              fill="#8b5cf6"
+                              variants={{
+                                hidden: { opacity: 0, scale: 0 },
+                                visible: { 
+                                  opacity: 1, 
+                                  scale: 1,
+                                  transition: { 
+                                    delay: node.id * 0.1,
+                                    type: "spring",
+                                    stiffness: 100,
+                                    damping: 10
+                                  }
+                                }
+                              }}
+                            />
+                          ))}
+                        </motion.svg>
                       </div>
                     </div>
 
                     <div className="p-6 md:col-span-2">
-
                       <CardHeader className="p-0 pb-4">
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-xl text-gray-800">{course.name}</CardTitle>
@@ -217,11 +290,10 @@ export default function Dashboard() {
                   </div>
                 </Card>
               ))}
-
             </section>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

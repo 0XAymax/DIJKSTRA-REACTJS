@@ -8,6 +8,7 @@ import Dashboard from "@/pages/dashboard/dashboard.tsx";
 import AuthGuard from "@/lib/AuthGuard.tsx";
 import LessonPage from "@/pages/learning/LessonPage.tsx";
 import ProblemPage from "@/pages/learning/ProblemPage.tsx";
+import UnitsList from "@/pages/units/UnitsList.tsx";
 
 const router = createBrowserRouter([
   {
@@ -56,10 +57,18 @@ const router = createBrowserRouter([
       },
     ],
   },
-
+  {
+    path: "/units",
+    element: (
+      <AuthGuard>
+        <UnitsList  />
+      </AuthGuard>
+    ),
+  },
   {
     path: "*",
     element: <NotFound />,
   },
 ]);
+
 export default router;

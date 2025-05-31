@@ -280,7 +280,7 @@ export default function Home() {
                     help you excel in algorithms, data structures, and more.
                   </p>
                 </div>
-                <div
+                <div 
                   className="flex flex-col gap-2 min-[400px]:flex-row justify-center animate-fadeInUp"
                   style={{ animationDelay: "0.6s" }}
                 >
