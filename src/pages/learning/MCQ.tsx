@@ -6,6 +6,7 @@ import { useLLMContext } from "@/context/LLMContext";
 import ProblemServices from "@/api/problem.service";
 import { useAuth } from "@/context/AuthContext";
 import LessonServices from "@/api/lesson.service";
+import { useCourse } from "@/context/CourseContext";
 
 interface MCQComponentProps {
   question: string;
@@ -24,6 +25,7 @@ export default function MCQComponent({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { setIsOpen, handleSendMessage } = useLLMContext();
   const { currentUser } = useAuth();
+  const { fetchProgress } = useCourse();
   const handleChoiceSelect = (index: number) => {
     if (!isSubmitted) {
       setSelectedChoice(index);
@@ -69,6 +71,7 @@ export default function MCQComponent({
     } catch (error) {
       console.error("Error completing problem:", error);
     }
+    await fetchProgress(currentUser.id);
   };
 
   const handleSubmit = async () => {

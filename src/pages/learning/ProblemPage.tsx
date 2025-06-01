@@ -6,6 +6,7 @@ import PracticeProblem from "./PracticeProblem";
 
 export default function ProblemPage() {
   const [searchParams] = useSearchParams();
+  // This is pretty bad, but it works for now
   const lessonId = searchParams.get("lessonId");
   const index = parseInt(searchParams.get("index") || "0", 10);
   const { courses } = useCourse();
@@ -17,7 +18,16 @@ export default function ProblemPage() {
   const nextProblem = problems[index + 1];
   const prevProblem = problems[index - 1];
 
- 
+  const current_order = courses
+    .flatMap((course) => course.units)
+    .find((unit) => unit.lesson?.id === lessonId)?.order;
+
+  const next_unit = courses
+    .flatMap((course) => course.units)
+    .find((unit) => unit.order === current_order + 1);
+
+  const nextLessonId = next_unit?.lesson?.id;
+
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1 flex justify-center px-4 py-8">
@@ -54,12 +64,10 @@ export default function ProblemPage() {
               </Button>
             </Link>
           ) : (
-            <Link to={`/learning/${lessonId}`}>
-                <Button
-                  className="bg-green-600 hover:bg-green-500 cursor-pointer"
-                >
-                  Finish
-                </Button>
+            <Link to={`/learning/${nextLessonId}`}>
+              <Button className="bg-green-600 hover:bg-green-500 cursor-pointer">
+                Finish
+              </Button>
             </Link>
           )}
         </div>

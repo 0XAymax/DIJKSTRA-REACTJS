@@ -7,9 +7,9 @@ import NotFound from "./notFound";
 import { useAuth } from "@/context/AuthContext";
 import LessonServices from "@/api/lesson.service";
 export default function LessonPage() {
-  const {currentUser} = useAuth();
+  const { currentUser } = useAuth();
   const { lessonId } = useParams();
-  const { courses } = useCourse();
+  const { courses, fetchProgress } = useCourse();
   const lesson = courses
     .flatMap((course) => course.units)
     .map((unit) => unit.lesson)
@@ -23,50 +23,49 @@ export default function LessonPage() {
     .flatMap((course) => course.units)
     .filter((unit) => unit.lesson?.id === lessonId)
     .flatMap((unit) => unit.practice_problems || []);
-    const isLessonCompleted = async () => {
-      if (!currentUser) {
-        console.error("User not authenticated");
-        return;
-      }
-      try {
-        const response = await LessonServices.getUserCompletions(
-          currentUser.id
+  const isLessonCompleted = async () => {
+    if (!currentUser) {
+      console.error("User not authenticated");
+      return;
+    }
+    try {
+      const response = await LessonServices.getUserCompletions(currentUser.id);
+      if (response) {
+        return response.lessons.some(
+          (completion) => completion.lesson_id === lessonId
         );
-        if (response) {
-          return response.lessons.some(
-            (completion) => completion.lesson_id === lessonId
-          );
+      }
+    } catch (error) {
+      console.error("Error checking lesson completion:", error);
+      return false;
+    }
+  };
+
+  const handleCompleteLesson = async () => {
+    if (!currentUser) {
+      console.error("User not authenticated");
+      return;
+    }
+    if (!lessonId) {
+      console.error("Lesson ID is not provided");
+      return;
+    }
+    const completed = await isLessonCompleted();
+    if (!completed) {
+      try {
+        const response = await LessonServices.CompleteLesson(
+          currentUser.id,
+          lessonId
+        );
+        if (response.status === 200) {
+          console.log("Lesson completed successfully");
         }
       } catch (error) {
-        console.error("Error checking lesson completion:", error);
-        return false;
+        console.error("Error completing lesson:", error);
       }
-    };
-
-    const handleCompleteLesson = async () => {
-      if (!currentUser) {
-        console.error("User not authenticated");
-        return;
-      }
-      if (!lessonId) {
-        console.error("Lesson ID is not provided");
-        return;
-      }
-      const completed = await isLessonCompleted();
-      if (!completed) {
-        try {
-          const response = await LessonServices.CompleteLesson(
-            currentUser.id,
-            lessonId
-          );
-          if (response.status === 200) {
-            console.log("Lesson completed successfully");
-          }
-        } catch (error) {
-          console.error("Error completing lesson:", error);
-        }
-      }
-    };
+    }
+    await fetchProgress(currentUser.id);
+  };
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1 max-w-3xl mx-auto px-4 py-8">
@@ -80,7 +79,10 @@ export default function LessonPage() {
           <Link
             to={`/learning/problem/${problems[0]?.id}?lessonId=${lessonId}&index=0`}
           >
-            <Button className="bg-purple-700 hover:bg-purple-600 cursor-pointer" onClick={handleCompleteLesson}>
+            <Button
+              className="bg-purple-700 hover:bg-purple-600 cursor-pointer"
+              onClick={handleCompleteLesson}
+            >
               Start Practice →
             </Button>
           </Link>

@@ -5,6 +5,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import { useAuth } from "./AuthContext";
 
 export interface CourseContextType {
+  fetchProgress: (userId: string) => Promise<void>;
   courses: Course[];
   setCourses: (course: Course[]) => void;
   unitsProgress: Progress[];
@@ -46,16 +47,16 @@ export const CourseProvider = ({ children }: { children: React.ReactNode }) => {
     fetchCourse();
   }, []);
 
+  const fetchProgress = async (userId: string) => {
+    try {
+      console.log("Fetching progress for user:", userId);
+      const response = await UnitServices.getUserProgress(userId);
+      setUnitsProgress(response);
+    } catch (e: any) {
+      console.error(e);
+    }
+  };
   useEffect(() => {
-    const fetchProgress = async (userId: string) => {
-      try {
-        const response = await UnitServices.getUserProgress(userId);
-        setUnitsProgress(response);
-      } catch (e: any) {
-        console.error(e);
-      }
-    };
-
     if (currentUser) fetchProgress(currentUser.id);
   }, [currentUser]);
 
@@ -71,6 +72,7 @@ export const CourseProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
   const value = {
+    fetchProgress,
     courses,
     setCourses,
     unitsProgress,
