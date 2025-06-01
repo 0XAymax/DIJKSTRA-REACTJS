@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && mv dist/* . && rmdir distt",
+    "build": "vite build && mv dist/* . && rmdir dist",
     "lint": "eslint .",
     "preview": "vite preview"
   },
