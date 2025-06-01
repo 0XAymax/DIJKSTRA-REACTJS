@@ -11,6 +11,7 @@ const SkillServices = {
     },
     getUserSkill: async (user_id: string) => {
         const repsonse = await api.get(`/users/${user_id}/skills`);
+        console.log("User skills response:", repsonse.data);
         return repsonse.data;
     }
 
