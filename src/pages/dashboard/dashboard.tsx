@@ -33,85 +33,85 @@ import { Link, useNavigate } from "react-router-dom";
 import Logo from "@/components/ui/Logo";
 import { ScrollArea } from "@/components/ui/scroll-area";
 export default function Dashboard() {
-    const { currentUser, logout } = useAuth();
-    const [skills, setSkills] = useState<Skill[]>([]);
-    const { courses } = useCourse();
-    const navigate = useNavigate();
-    const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const { currentUser, logout } = useAuth();
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const { courses, unitsProgress } = useCourse();
+  const navigate = useNavigate();
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
 
-    useEffect(() => {
-      const fetchSkills = async () => {
-        if (!currentUser?.id) {
-          console.log("No user ID found");
-          return;
-        }
-        const prevSkill = skills;
-        try {
-          const response = await SkillServices.getUserSkill(currentUser?.id);
-          console.log("Fetched skills:", response);
-          setSkills(response);
-        } catch (error) {
-          setSkills(prevSkill);
-          console.error("Error fetching skills:", error);
-        }
-      };
-      fetchSkills();
-    }, [currentUser?.id, skills]);
-    const getSkillIcon = (skillName: string) => {
-      switch (skillName) {
-        case "Mathematical Reasoning":
-          return Brain;
-        case "Graph Representation":
-          return GitBranch;
-        case "Pattern Recognition":
-          return Zap;
-        case "Shortest Path Reasoning":
-          return Route;
-        case "Algorithm Implementation":
-          return Code2;
-        case "Algorithm Complexity Analysis":
-          return Timer;
-        case "Priority Queue Usage":
-          return ListOrdered;
-        case "Shortest Path Algorithms":
-          return Route;
-        case "Algorithm Optimization":
-          return TrendingUp;
-        default:
-          return Brain;
+  useEffect(() => {
+    const fetchSkills = async () => {
+      if (!currentUser?.id) {
+        console.log("No user ID found");
+        return;
+      }
+      const prevSkill = skills;
+      try {
+        const response = await SkillServices.getUserSkill(currentUser?.id);
+        console.log("Fetched skills:", response);
+        setSkills(response);
+      } catch (error) {
+        setSkills(prevSkill);
+        console.error("Error fetching skills:", error);
       }
     };
-    useEffect(() => {
-      const fetchCompletedLessons = async () => {
-        if (!currentUser?.id) return;
+    fetchSkills();
+  }, [currentUser?.id, skills]);
+  const getSkillIcon = (skillName: string) => {
+    switch (skillName) {
+      case "Mathematical Reasoning":
+        return Brain;
+      case "Graph Representation":
+        return GitBranch;
+      case "Pattern Recognition":
+        return Zap;
+      case "Shortest Path Reasoning":
+        return Route;
+      case "Algorithm Implementation":
+        return Code2;
+      case "Algorithm Complexity Analysis":
+        return Timer;
+      case "Priority Queue Usage":
+        return ListOrdered;
+      case "Shortest Path Algorithms":
+        return Route;
+      case "Algorithm Optimization":
+        return TrendingUp;
+      default:
+        return Brain;
+    }
+  };
+  useEffect(() => {
+    const fetchCompletedLessons = async () => {
+      if (!currentUser?.id) return;
 
-        try {
-          const response = await LessonServices.getUserCompletions(
-            currentUser.id
-          );
-          if (response && response.lessons) {
-            const ids = response.lessons.map((l) => l.lesson_id);
-            setCompletedLessons(ids);
-          }
-        } catch (error) {
-          console.error("Error fetching completed lessons:", error);
+      try {
+        const response = await LessonServices.getUserCompletions(
+          currentUser.id
+        );
+        if (response && response.lessons) {
+          const ids = response.lessons.map((l) => l.lesson_id);
+          setCompletedLessons(ids);
         }
-      };
+      } catch (error) {
+        console.error("Error fetching completed lessons:", error);
+      }
+    };
 
-      fetchCompletedLessons();
-    }, [currentUser?.id]);
-      
-    const getInitials = (name: string) => {
-      return name
-        .split(" ")
-        .map((part) => part[0])
-        .join("")
-        .toUpperCase();
-    };
-    const handleLogout = () => {
-      logout();
-      navigate("/login");
-    };
+    fetchCompletedLessons();
+  }, [currentUser?.id]);
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase();
+  };
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50">
       {/* Header */}
@@ -228,15 +228,15 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Lessons List */}
+        {/* Units List */}
         <Card className="mt-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-purple-600" />
-              Course Lessons
+              Course Units
             </CardTitle>
             <CardDescription>
-              Progress through these lessons to master Dijkstra's Algorithm
+              Progress through these units to master Dijkstra's Algorithm
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -257,7 +257,8 @@ export default function Dashboard() {
                         </h3>
                       </div>
                       <div className="flex items-center gap-2">
-                        {completedLessons.includes(unit.lesson.id) ? (
+                        {unitsProgress.find((p) => p.unit_id === unit.id)
+                          ?.completion_percentage == 100 ? (
                           <CheckCircle className="h-5 w-5 text-green-500" />
                         ) : (
                           <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
