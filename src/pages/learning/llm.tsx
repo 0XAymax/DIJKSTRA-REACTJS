@@ -2,12 +2,12 @@ import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import {
   Send,
-  Bot,
   User,
   MessageCircle,
   X,
   Minimize2,
   Maximize2,
+  Brain,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
@@ -79,7 +79,7 @@ export function LLMComponent() {
       >
         {/* Header */}
         <div className="flex items-center gap-2 p-4 border-b border-purple-700 bg-gray-50">
-          <Bot className="h-6 w-6 text-primary" />
+          <Brain className="h-6 w-6 text-violet-600 group-hover:text-fuchsia-600 transition-colors duration-300" />
           <h2 className="text-lg font-semibold text-gray-900">Vertex0</h2>
           <div className="ml-auto flex items-center gap-1">
             <Button
@@ -120,7 +120,7 @@ export function LLMComponent() {
                     {message.sender === "ai" && (
                       <div className="flex-shrink-0">
                         <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Bot className="h-4 w-4 text-primary" />
+                          <Brain className="h-6 w-6 text-violet-600 group-hover:text-fuchsia-600 transition-colors duration-300" />
                         </div>
                       </div>
                     )}
@@ -163,7 +163,7 @@ export function LLMComponent() {
                   <div className="flex gap-3 justify-start">
                     <div className="flex-shrink-0">
                       <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Bot className="h-4 w-4 text-primary" />
+                        <Brain className="h-6 w-6 text-violet-600 group-hover:text-fuchsia-600 transition-colors duration-300" />
                       </div>
                     </div>
                     <div className="bg-gray-100 rounded-lg p-3 border border-purple-200">
