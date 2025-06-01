@@ -3,16 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
 import { useLLMContext } from "@/context/LLMContext";
-import ProblemServices from "@/api/problem.service";
-import { useAuth } from "@/context/AuthContext";
-import LessonServices from "@/api/lesson.service";
-import { useCourse } from "@/context/CourseContext";
 
 interface MCQComponentProps {
   question: string;
   choices: string[];
   correctIndex: number;
   problemId: string;
+  isProblemCompleted: () => Promise<boolean | undefined>;
+  handleProblemComplete: () => void;
 }
 
 export default function MCQComponent({
@@ -20,58 +18,16 @@ export default function MCQComponent({
   choices,
   correctIndex,
   problemId,
+  isProblemCompleted,
+  handleProblemComplete,
 }: MCQComponentProps) {
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { setIsOpen, handleSendMessage } = useLLMContext();
-  const { currentUser } = useAuth();
-  const { fetchProgress } = useCourse();
   const handleChoiceSelect = (index: number) => {
     if (!isSubmitted) {
       setSelectedChoice(index);
     }
-  };
-  const isProblemCompleted = async () => {
-    if (!currentUser) {
-      console.error("User not authenticated");
-      return;
-    }
-    try {
-      const response = await LessonServices.getUserCompletions(currentUser.id);
-      if (response) {
-        return response.practice_problems.some(
-          (completion) => completion.problem_id === problemId
-        );
-      }
-    } catch (error) {
-      console.error("Error checking problem completion:", error);
-      return false;
-    }
-  };
-  const handleProblemComplete = async () => {
-    if (!currentUser) {
-      console.error("User not authenticated");
-      return;
-    }
-    try {
-      console.log(
-        "USER ID IN COMPLETE PROBLEM RQUEST:",
-        currentUser.id,
-        "PROBLEM ID:",
-        problemId
-      );
-      const response = await ProblemServices.CompleteProblem(
-        currentUser.id,
-        problemId
-      );
-      if (response.status === 200) {
-        console.log("Problem completed successfully");
-      }
-      console.log("Response from complete problem:", response);
-    } catch (error) {
-      console.error("Error completing problem:", error);
-    }
-    await fetchProgress(currentUser.id);
   };
 
   const handleSubmit = async () => {

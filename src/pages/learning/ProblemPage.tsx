@@ -73,7 +73,9 @@ export default function ProblemPage() {
               ""
             )
           ) : (
-            <Link to={`/learning/${nextLessonId}`}>
+            <Link
+              to={nextLessonId ? `/learning/${nextLessonId}` : "/dashboard"}
+            >
               <Button className="bg-green-600 hover:bg-green-500 cursor-pointer">
                 Finish
               </Button>
