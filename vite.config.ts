@@ -12,6 +12,6 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'public'  // or 'build' or any folder Vercel expects
+    outDir: 'build'  // or 'build' or any folder Vercel expects
   }
 });
