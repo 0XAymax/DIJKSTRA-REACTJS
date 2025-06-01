@@ -75,7 +75,7 @@ export default function LessonPage() {
       </div>
 
       <div className="sticky bottom-0 bg-white border-t border-gray-200 shadow-lg">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex justify-end">
+        <div className="px-4 py-4 flex justify-end">
           <Link
             to={`/learning/problem/${problems[0]?.id}?lessonId=${lessonId}&index=0`}
           >

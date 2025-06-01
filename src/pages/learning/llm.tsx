@@ -1,47 +1,64 @@
-import type React from "react"
-import { useState, useRef, useEffect } from "react"
-import { Send, Bot, User, MessageCircle, X, Minimize2, Maximize2 } from "lucide-react"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { useLLMContext } from "@/context/LLMContext"
+import type React from "react";
+import { useState, useRef, useEffect } from "react";
+import {
+  Send,
+  Bot,
+  User,
+  MessageCircle,
+  X,
+  Minimize2,
+  Maximize2,
+} from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useLLMContext } from "@/context/LLMContext";
 
 export function LLMComponent() {
-  const { isOpen, setIsOpen, messages,isLoading,inputRef,inputValue,setInputValue,handleSendMessage } = useLLMContext();
-  const [isMinimized, setIsMinimized] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const {
+    isOpen,
+    setIsOpen,
+    messages,
+    isLoading,
+    inputRef,
+    inputValue,
+    setInputValue,
+    handleSendMessage,
+  } = useLLMContext();
+  const [isMinimized, setIsMinimized] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages])
+  }, [messages]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      if (!inputValue.trim() || isLoading) return
+      e.preventDefault();
+      if (!inputValue.trim() || isLoading) return;
       handleSendMessage(inputValue.trim());
     }
-  }
+  };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("fr-FR", {
       hour: "2-digit",
       minute: "2-digit",
-    })
-  }
+    });
+  };
 
   const handleSending = () => {
-    if (!inputValue.trim() || isLoading) return
+    if (!inputValue.trim() || isLoading) return;
     handleSendMessage(inputValue.trim());
-  }
+  };
 
   if (!isOpen) {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 rounded-full p-2 shadow-lg bg-primary text-primary-foreground"
+        className="fixed bottom-20 right-6 z-50 rounded-full p-2 shadow-lg bg-primary text-primary-foreground"
       >
         <MessageCircle className="h-6 w-6" />
         {messages.length > 1 && (
@@ -50,7 +67,7 @@ export function LLMComponent() {
           </div>
         )}
       </Button>
-    )
+    );
   }
 
   return (
@@ -197,4 +214,4 @@ export function LLMComponent() {
   );
 }
 
-export default LLMComponent
+export default LLMComponent;

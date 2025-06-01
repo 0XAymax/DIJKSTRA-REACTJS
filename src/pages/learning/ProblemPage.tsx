@@ -3,8 +3,10 @@ import { Link, useSearchParams } from "react-router-dom";
 import "@/markdown.css";
 import { Button } from "@/components/ui/button";
 import PracticeProblem from "./PracticeProblem";
+import { useState } from "react";
 
 export default function ProblemPage() {
+  const [isComplete, setIsComplete] = useState(false);
   const [searchParams] = useSearchParams();
   // This is pretty bad, but it works for now
   const lessonId = searchParams.get("lessonId");
@@ -33,12 +35,15 @@ export default function ProblemPage() {
       <div className="flex-1 flex justify-center px-4 py-8">
         <div className="max-w-3xl w-full">
           <h1 className="text-3xl font-bold mb-6">Practice Problem</h1>
-          <PracticeProblem problem={currentProblem} />
+          <PracticeProblem
+            problem={currentProblem}
+            setIsComplete={setIsComplete}
+          />
         </div>
       </div>
 
       <div className="sticky bottom-0 bg-white border-t border-gray-200 shadow-lg">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="px-4 py-4 flex justify-between items-center">
           {prevProblem ? (
             <Link
               to={`/learning/problem/${
@@ -54,15 +59,19 @@ export default function ProblemPage() {
           )}
 
           {nextProblem ? (
-            <Link
-              to={`/learning/problem/${
-                nextProblem.id
-              }?lessonId=${lessonId}&index=${index + 1}`}
-            >
-              <Button className="bg-purple-700 hover:bg-purple-600 cursor-pointer">
-                Next Problem →
-              </Button>
-            </Link>
+            isComplete ? (
+              <Link
+                to={`/learning/problem/${
+                  nextProblem.id
+                }?lessonId=${lessonId}&index=${index + 1}`}
+              >
+                <Button className="bg-purple-700 hover:bg-purple-600 cursor-pointer">
+                  Next Problem →
+                </Button>
+              </Link>
+            ) : (
+              ""
+            )
           ) : (
             <Link to={`/learning/${nextLessonId}`}>
               <Button className="bg-green-600 hover:bg-green-500 cursor-pointer">
