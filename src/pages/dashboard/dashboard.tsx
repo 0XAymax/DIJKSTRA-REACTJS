@@ -31,7 +31,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "@/components/ui/Logo";
-
+import { ScrollArea } from "@/components/ui/scroll-area";
 export default function Dashboard() {
     const { currentUser, logout } = useAuth();
     const [skills, setSkills] = useState<Skill[]>([]);
@@ -160,39 +160,41 @@ export default function Dashboard() {
                   Track your progress across key learning areas
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {skills.map((skill) => {
-                  const Icon = getSkillIcon(skill.name);
-                  const percentage = Math.round(skill.learning_level * 100);
+              <ScrollArea className="h-40 sm:h-41 pr-2 sm:pr-4">
+                <CardContent className="space-y-6">
+                  {skills.map((skill) => {
+                    const Icon = getSkillIcon(skill.name);
+                    const percentage = Math.round(skill.learning_level * 100);
 
-                  return (
-                    <div key={skill.name} className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100">
-                            <Icon className="h-4 w-4 text-purple-600" />
+                    return (
+                      <div key={skill.name} className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100">
+                              <Icon className="h-4 w-4 text-purple-600" />
+                            </div>
+                            <div>
+                              <h3 className="font-medium text-gray-900">
+                                {skill.name}
+                              </h3>
+                              <p className="text-sm text-gray-600">
+                                {skill.description}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <h3 className="font-medium text-gray-900">
-                              {skill.name}
-                            </h3>
-                            <p className="text-sm text-gray-600">
-                              {skill.description}
-                            </p>
-                          </div>
+                          <Badge
+                            variant="secondary"
+                            className="bg-purple-100 text-purple-700"
+                          >
+                            {percentage}%
+                          </Badge>
                         </div>
-                        <Badge
-                          variant="secondary"
-                          className="bg-purple-100 text-purple-700"
-                        >
-                          {percentage}%
-                        </Badge>
+                        <Progress value={percentage} className="h-2" />
                       </div>
-                      <Progress value={percentage} className="h-2" />
-                    </div>
-                  );
-                })}
-              </CardContent>
+                    );
+                  })}
+                </CardContent>
+              </ScrollArea>
             </Card>
           </div>
 
