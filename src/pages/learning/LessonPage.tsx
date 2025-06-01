@@ -68,7 +68,7 @@ export default function LessonPage() {
   };
   return (
     <div className="h-full flex flex-col">
-      <div className="flex-1 max-w-3xl mx-auto px-4 py-8">
+      <div className="flex-1 max-w-6xl mx-auto px-4 py-8">
         <div className="markdown">
           <ReactMarkdown>{lesson?.content || ""}</ReactMarkdown>
         </div>

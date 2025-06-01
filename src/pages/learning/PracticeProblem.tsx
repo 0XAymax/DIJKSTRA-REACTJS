@@ -36,9 +36,14 @@ function PracticeProblem({
     try {
       const response = await LessonServices.getUserCompletions(currentUser.id);
       if (response) {
-        return response.practice_problems.some(
-          (completion) => completion.problem_id === problemId
-        );
+        if (
+          response.practice_problems.some(
+            (completion) => completion.problem_id === problemId
+          )
+        ) {
+          setIsComplete(true);
+          return true;
+        }
       }
     } catch (error) {
       console.error("Error checking problem completion:", error);
