@@ -29,7 +29,7 @@ export default function LearningSideBar() {
           Master the fundamentals of pathfinding
         </p>
       </div>
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden pr-4">
         <ScrollArea className="h-full">
           {Allunits.map((unit, index) => {
             const currentProgress =
@@ -47,10 +47,11 @@ export default function LearningSideBar() {
             return (
               <div key={unit.id} className="mb-2">
                 <div
-                  className={`flex items-center p-2 ${isLocked
+                  className={`flex items-center p-2 ${
+                    isLocked
                       ? "cursor-not-allowed opacity-50"
                       : "hover:bg-slate-100 cursor-pointer"
-                    } rounded-md`}
+                  } rounded-md`}
                   onClick={() => !isLocked && toggleUnit(unit.id)}
                 >
                   {expandedUnits[unit.id] ? (
