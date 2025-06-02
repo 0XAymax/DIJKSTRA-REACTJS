@@ -272,7 +272,10 @@ export default function Home() {
       </header>
 
       <main className="flex-1">
-        <section className="py-20 md:py-25" data-section="hero">
+        <section
+          className="py-20 md:py-25 flex justify-center"
+          data-section="hero"
+        >
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
               <div
@@ -483,7 +486,11 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="how-it-works" className="py-16" data-section="howItWorks">
+        <section
+          id="how-it-works"
+          className="py-16 flex justify-center"
+          data-section="howItWorks"
+        >
           <div className="container px-4 md:px-6">
             <div
               className={`flex flex-col items-center justify-center space-y-4 text-center transition-all duration-1000 ${
@@ -560,7 +567,10 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t bg-background" data-section="footer">
+      <footer
+        className="border-t bg-background flex justify-center"
+        data-section="footer"
+      >
         <div
           className={`container px-4 py-12 md:px-6 transition-all duration-1000 ${
             isVisible.footer
