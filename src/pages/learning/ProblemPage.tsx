@@ -72,7 +72,7 @@ export default function ProblemPage() {
             ) : (
               ""
             )
-          ) : (
+          ) : isComplete ? (
             <Link
               to={nextLessonId ? `/learning/${nextLessonId}` : "/dashboard"}
             >
@@ -80,6 +80,8 @@ export default function ProblemPage() {
                 Finish
               </Button>
             </Link>
+          ) : (
+            ""
           )}
         </div>
       </div>
