@@ -61,6 +61,7 @@ export default function ProblemPage() {
           {nextProblem ? (
             isComplete ? (
               <Link
+                onClick={() => setIsComplete(false)}
                 to={`/learning/problem/${
                   nextProblem.id
                 }?lessonId=${lessonId}&index=${index + 1}`}
@@ -74,6 +75,7 @@ export default function ProblemPage() {
             )
           ) : isComplete ? (
             <Link
+              onClick={() => setIsComplete(false)}
               to={nextLessonId ? `/learning/${nextLessonId}` : "/dashboard"}
             >
               <Button className="bg-green-600 hover:bg-green-500 cursor-pointer">
