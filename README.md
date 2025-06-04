@@ -1,5 +1,4 @@
 # DijkstraVerse
-## Intelligent Tutoring System for Dijkstra's Algorithm
 
 An interactive web-based tutoring system that helps students learn and visualize Dijkstra's algorithm step by step.
 
@@ -15,8 +14,8 @@ An interactive web-based tutoring system that helps students learn and visualize
 - **Database**: PostgreSQL
 - **Deployment**: Heroku, Vercel
 
-## 📸 Screenshots
-![App Screenshot](./screenshots/screenshot1.png)
+## 📸 Demo
+[Screencast_20250604_140402.webm](https://github.com/user-attachments/assets/3d5cb917-495b-4ccf-8cf4-0c21c852128e)
 
 ## 🧠 How It Works
 1. Students go through a course with a chatbot to help them if they get stuck or need a question answered.
