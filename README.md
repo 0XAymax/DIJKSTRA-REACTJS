@@ -30,9 +30,6 @@ cd DIJKSTRA-REACTJS
 npm install
 npm run dev
 ```
-✨ Demo
-
-Live Demo
 
 🧑‍💻 Contributors
 - @Kwanddwo
