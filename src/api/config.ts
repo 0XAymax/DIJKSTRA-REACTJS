@@ -12,12 +12,12 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
-        console.log('API Request Interceptor: Token present:', !!token);
+        // console.log('API Request Interceptor: Token present:', !!token);
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
-            console.log('API Request Interceptor: Added Authorization header');
+            // console.log('API Request Interceptor: Added Authorization header');
         }
-        console.log('API Request Interceptor: Request config:', {
+        // console.log('API Request Interceptor: Request config:', {
             url: config.url,
             method: config.method,
             headers: config.headers,
@@ -32,7 +32,7 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
     (response) => {
-        console.log('API Response Interceptor: Response received:', {
+        // console.log('API Response Interceptor: Response received:', {
             url: response.config.url,
             status: response.status,
         });

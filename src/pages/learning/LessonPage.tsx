@@ -58,7 +58,7 @@ export default function LessonPage() {
           lessonId
         );
         if (response.status === 200) {
-          console.log("Lesson completed successfully");
+          // console.log("Lesson completed successfully");
         }
       } catch (error) {
         console.error("Error completing lesson:", error);

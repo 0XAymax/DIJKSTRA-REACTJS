@@ -49,7 +49,7 @@ export const CourseProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchProgress = async (userId: string) => {
     try {
-      console.log("Fetching progress for user:", userId);
+      // console.log("Fetching progress for user:", userId);
       const response = await UnitServices.getUserProgress(userId);
       setUnitsProgress(response);
     } catch (e: any) {

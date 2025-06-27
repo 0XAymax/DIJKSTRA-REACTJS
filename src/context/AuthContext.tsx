@@ -62,18 +62,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return;
     }
 
-    console.log("Token expires at:", new Date(decoded.exp * 1000));
+    // console.log("Token expires at:", new Date(decoded.exp * 1000));
 
     if (Date.now() >= decoded.exp * 1000) {
       removeToken();
-      console.log("Token expired. User logged out.");
+      // console.log("Token expired. User logged out.");
     }
   };
 
   useEffect(() => {
-    console.log("Mounting Token Check");
+    // console.log("Mounting Token Check");
     const storedToken = localStorage.getItem("token");
-    console.log(
+    // console.log(
       "Checking token on mount:",
       storedToken ? "Token exists" : "No token"
     );
@@ -83,15 +83,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .then((res) => {
           if (res.status === 200) {
             decodeAndSetToken(storedToken);
-            console.log("Token verified successfully.");
+            // console.log("Token verified successfully.");
           }else if(res.status === 401){
             removeToken();
             toast.error("Your session has expired. Please log in again.")
-            console.log("Token Expired");
+            // console.log("Token Expired");
           }
           else {
             removeToken();
-            console.log("Token verification failed. User logged out.");
+            // console.log("Token verification failed. User logged out.");
           }
         })
         .catch((err) => {
@@ -106,8 +106,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    console.log("Token state updated:", token);
-    console.log("isAuthenticated updated:", !!token);
+    // console.log("Token state updated:", token);
+    // console.log("isAuthenticated updated:", !!token);
   }, [token]);
 
   const login = async (userLogin: LoginRequest): Promise<any> => {
@@ -122,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     userRegister: RegisterRequest
   ): Promise<any> => {
     const res = await AuthService.register(userRegister);
-    console.log(res.data);
+    // console.log(res.data);
     return res;
   };
 

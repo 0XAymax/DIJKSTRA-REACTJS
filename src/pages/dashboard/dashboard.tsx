@@ -42,13 +42,13 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchSkills = async () => {
       if (!currentUser?.id) {
-        console.log("No user ID found");
+        // console.log("No user ID found");
         return;
       }
       const prevSkill = skills;
       try {
         const response = await SkillServices.getUserSkill(currentUser?.id);
-        console.log("Fetched skills:", response);
+        // console.log("Fetched skills:", response);
         setSkills(response);
       } catch (error) {
         setSkills(prevSkill);

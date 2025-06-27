@@ -57,7 +57,7 @@ function PracticeProblem({
       return;
     }
     try {
-      console.log(
+      // console.log(
         "USER ID IN COMPLETE PROBLEM RQUEST:",
         currentUser.id,
         "PROBLEM ID:",
@@ -68,9 +68,9 @@ function PracticeProblem({
         problemId
       );
       if (response.status === 200) {
-        console.log("Problem completed successfully");
+        // console.log("Problem completed successfully");
       }
-      console.log("Response from complete problem:", response);
+      // console.log("Response from complete problem:", response);
     } catch (error) {
       console.error("Error completing problem:", error);
     }
